@@ -1,7 +1,9 @@
 # sure-repo
 ------------
 To clone this repository to your own workspace (e.g. your laptop), run the command
+
     git clone https://github.com/silvialuu/sure-repo
+    
 in your terminal. I suggest that you could first cd to the directory where you want to put this repository, and then run the clone command. Otherwise, this repository will be cloned to the folder Macintosh HD -> Users -> YOUR_USER_NAME by default. 
 
 To keep the repository on your own workspace up to date with the changes that have been made to the remote location by your collaborators, run the command
