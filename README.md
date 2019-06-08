@@ -5,10 +5,13 @@ To clone this repository to your own workspace (e.g. your laptop), run the comma
 in your terminal. I suggest that you could first cd to the directory where you want to put this repository, and then run the clone command. Otherwise, this repository will be cloned to the folder Macintosh HD -> Users -> YOUR_USER_NAME by default. 
 
 To keep the repository on your own workspace up to date with the changes that have been made to the remote location by your collaborators, run the command
+
 	git pull
+
 I strongly suggest that you run this command each time before you want to make any change in your local repository. In particular, if you 'push' to the remote location before you 'pull' the changes that have been made there by your collaborators, you will run into trouble. 
 
 To upload the changes you have made on your own computer, run commands
+
 	git add FILENAME1 FILENAME2 FILENAME3
 	git commit -m "SOMETHING USEFUL"
 	git push origin master
