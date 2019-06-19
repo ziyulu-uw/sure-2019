@@ -20,7 +20,7 @@ w = math.sqrt(omega - 0.25*mu**2)
 N = 100  # number of time steps in one simulation
 dt = 0.05  # step size in one simulation
 sigma = 0.1  # noise coefficient in SDE
-var_v = 0.05  # observation noise variance
+Q = 0.05  # observation noise variance
 X0 = np.array([[1.0],[0.0]])  # initial state (X = [x, v]^T)
 C = np.array([1.0, 0.0], ndmin=2) # observation matrix
 
@@ -69,7 +69,7 @@ def compute_gradient(K, z):
         W = np.array(W, ndmin=2)
         W = np.transpose(W)
         X = A @ X + W  # state update
-        V = np.random.normal(0, var_v)  # gaussian observation noise with mean 0 variance var_v
+        V = np.random.normal(0, Q)  # gaussian observation noise with mean 0 variance Q
         Z = C @ X + V  # observation
         X_hat = A @ X_hat + K * (Z - Z_hat)  # state estimate
         diag = Z - Z_hat
@@ -181,11 +181,11 @@ def Gradient_descent(n, alpha, m, z):
     plt.show()
 
 
-# Testing code
+######## Testing code ###########
 def finite_diff_approx(K, delta_K, z):
     # K -- Kalman gain, delta_K -- difference in finite difference approximation, z -- random seed
     # performs first order finite difference approximation of dF/dK: dF/dK = (F(K+delta_K) - F(K))/delta_K
-    # returns dF/dK, and a finite difference approximation of dF/dK
+    # returns the finite difference approximation of dF/dK, and F
 
     grad_approx = np.array([[0.0, 0.0]])
 
@@ -201,7 +201,7 @@ def finite_diff_approx(K, delta_K, z):
         W = np.array(W, ndmin=2)
         W = np.transpose(W)
         X = A @ X + W  # state update
-        V = np.random.normal(0, var_v)  # gaussian observation noise with mean 0 variance var_v
+        V = np.random.normal(0, Q)  # gaussian observation noise with mean 0 variance Q
         Z = C @ X + V  # observation
         X_hat = A @ X_hat + K * (Z - Z_hat)  # state estimate
         error = X_hat - X
@@ -224,7 +224,7 @@ def finite_diff_approx(K, delta_K, z):
             W = np.array(W, ndmin=2)
             W = np.transpose(W)
             X = A @ X + W  # state update
-            V = np.random.normal(0, var_v)  # gaussian observation noise with mean 0 variance var_v
+            V = np.random.normal(0, Q)  # gaussian observation noise with mean 0 variance Q
             Z = C @ X + V  # observation
             X_hat = A @ X_hat + K * (Z - Z_hat)  # state estimate
             error = X_hat - X
@@ -247,7 +247,7 @@ def check_order(K, delta_K, z, n):
     x_L = []
     y_L = []
     grad, err = compute_gradient(K, z)
-    print(grad)
+    print(grad)  # This is the gradient computed by formulas
     for i in range(n):
         delta_K_n = delta_K * (i+1)
         grad_approx, F = finite_diff_approx(K, delta_K_n, z)
@@ -256,6 +256,9 @@ def check_order(K, delta_K, z, n):
 
     # print(y_L)
     plt.plot(x_L, y_L)
+    plt.title("First order finite difference approximation of dF/dK")
+    plt.xlabel("delta_K")
+    plt.ylabel("Frobenius norm of (grad_approx - grad)")
     plt.show()
 
 
@@ -263,7 +266,7 @@ def check_order(K, delta_K, z, n):
 # K = np.array([[2.0], [2.0]])
 # check_order(K, 0.00001,1,5)
 
-Stochastic_gradient_descent(500, 1e-5, 1)
+# Stochastic_gradient_descent(500, 1e-5, 1)
 # Gradient_descent(500, 0.001, 10, 1)
 
 

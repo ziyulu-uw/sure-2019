@@ -19,7 +19,7 @@ w = math.sqrt(omega - 0.25*mu**2)
 N = 100  # number of time steps in one simulation
 dt = 0.05  # step size in one simulation
 sigma = 0.1  # noise coefficient in SDE
-var_v = 0.1  # observation noise variance
+Q = 0.1  # observation noise variance
 X0 = np.array([[1.0],[0.0]])  # initial state (X = [x, v]^T)
 C = np.array([1.0, 0.0], ndmin=2)  # observation matrix
 
@@ -68,7 +68,7 @@ def compute_gradient(K, z):
         W = np.array(W, ndmin=2)
         W = np.transpose(W)
         X = A @ X + W  # state update
-        V = np.random.normal(0, var_v)  # gaussian observation noise with mean 0 variance var_v
+        V = np.random.normal(0, Q)  # gaussian observation noise with mean 0 variance Q
         Z = C @ X + V  # observation
         X_hat = A @ X_hat + K * (Z - Z_hat)  # state estimate
         diag = Z - Z_hat
@@ -129,9 +129,9 @@ def Stochastic_gradient_descent(n,alpha, z):
     plt.legend()
     plt.show()
 
-Stochastic_gradient_descent(500, 1e-4, 1) # 500 -- number of gradient steps, 1e-5 -- learning rate, 1 -- random seed
+# Stochastic_gradient_descent(500, 1e-4, 1) # 500 -- number of gradient steps, 1e-5 -- learning rate, 1 -- random seed
 
 # K = np.array([[2.0], [2.0]])
 # grad, err = compute_gradient(K, 1)
-# print(grad)
+# print(grad, err)
 
