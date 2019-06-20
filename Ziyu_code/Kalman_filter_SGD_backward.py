@@ -81,10 +81,14 @@ def generate_path(K, z):
         X_hat = A @ X_hat + K * (Z - Z_hat)  # state estimate
         L_est.append(X_hat)  # stores the new estimation in the estimation list
 
+    # print("States", L_state)
+    # print("Obs", L_obs)
+    # print("Est", L_est)
+
     return L_state, L_obs, L_est
 
 
-def compute_gradient(L_state, L_obs, L_est):
+def compute_gradient(K, L_state, L_obs, L_est):
     # L_state -- list of states from one path, L_obs -- list of observations from one path, \
     # L_est -- list of state estimations from one path
     # computes dF/dK, where F = 1/2N *\sum_{n=1}^N (X_hat_n-X_n)^2
@@ -123,7 +127,7 @@ def stochastic_gradient_descent(K, n, alpha, z):
     grad_L = []
     for i in range(n):
         L_state, L_obs, L_est = generate_path(K, z)
-        grad = compute_gradient(L_state, L_obs, L_est)
+        grad = compute_gradient(K, L_state, L_obs, L_est)
         err = compute_error(L_state, L_est)
         err_L.append(err)
         grad_L.append(grad)
@@ -135,12 +139,11 @@ def stochastic_gradient_descent(K, n, alpha, z):
 
 def Stochastic_gradient_descent(K, n,alpha, z):
     # a wrapper function that calls stochastic_gradient_descent(K, n, alpha, z) and plots F vs n, log(dF/dK) vs n
-
+    print("Initialization: K11 is {}, K12 is {}".format(K[0][0], K[1][0]))
     # plots F vs n
     K, err_L, grad_L = stochastic_gradient_descent(K, n, alpha, z)
-    print(K)
-    # print(grad_L)
-    print(err_L[-1])
+    print("After {:d} iterations, K11 becomes {:.3f}, K12 becomes {:.3f}. The final loss is {:.3f}".format(n, K[0][0], K[1][0], err_L[-1]))
+
     x = [i for i in range(n)]
     plt.plot(x, err_L)
     plt.title("Stochastic gradient descent with {} steps and step size {}".format(str(n),str(alpha)))
@@ -254,10 +257,11 @@ def check_order(K, delta_K, z, n):
     plt.show()
 
 
-K = np.array([[5.0], [5.0]])
+K = np.array([[1.0], [1.0]])
+
 # check_order(K, 0.0001, 1, 10)
-# L_state, L_obs, L_est = generate_path(K, 1)
-# print(compute_error(L_state, L_est))
-K_, err_L, grad_L = Stochastic_gradient_descent(K, 40000, 0.1, 1)
-print(err_L)
-print(grad_L)
+
+K_, err_L, grad_L = Stochastic_gradient_descent(K, 1000, 0.1, 1)
+print("------Train history------")
+print("Loss for each iteration:", err_L)
+print("Gradient for each iteration:", grad_L)
