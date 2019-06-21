@@ -1,0 +1,43 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amsfonts}
+\begin{document}
+\begin{center}
+Matrix Perturbation Theory
+\end{center}
+The steady state covariance satisfies
+\[
+      S = MSM^t + R  \; .
+\]
+Suppose $M$ has a parameter $\theta$ and we want the derivative of $S$ with respect to $\theta$.
+If $Q$ is any quantity that depends on $\theta$, write the derivative as
+\[
+     \dot{Q} = \frac{d}{d\theta} Q \; .
+\]
+Suppose that $M$ depends on $\theta$ but $R$ does not.
+Differentiate the $S$ equation and use the chain rule.
+You get
+\[
+       \dot{S} - M \dot{S} M^t = - \left( \dot{M}SM^t + MS\dot{M}^t \right) 
+\]
+The vectorized version of $S$ is
+\[
+      \xi_S = \begin{pmatrix} S_{11} \\ S_{12} \\ S_{22} \end{pmatrix}
+\]
+The vectorized version of the $S$ equation is
+\[
+      D \xi_S = \xi_R
+\]
+If $S$ is known, then we can calculate
+\[
+        U = \dot{M}SM^t + MS\dot{M}^t
+\]
+The entries of $\dot{S}$ are found by solving
+\[
+       D \xi_{\dot{S}} = \xi_U \; .
+\]
+
+If you look in a book, you might find equations involving the tensor product of matrices, or the 
+symmetric tensor product of matrices.  
+That's a more abstract way to describe the relation between the matrices you call $M$ and $D$.
+
+\end{document}
