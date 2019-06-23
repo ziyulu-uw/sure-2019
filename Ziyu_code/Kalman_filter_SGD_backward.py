@@ -19,7 +19,7 @@ w = math.sqrt(omega - 0.25*mu**2)
 N = 4  # number of time steps in one simulation
 dt = 0.05  # step size in one simulation
 sigma = 0.1  # noise coefficient in SDE
-Q = 0.1  # observation noise variance
+Q = 0.5  # observation noise variance
 X0 = np.array([[1.0],[0.0]])  # initial state (X = [x, v]^T)
 C = np.array([1.0, 0.0], ndmin=2)  # observation matrix
 
@@ -53,11 +53,11 @@ R = R.real
 # print(R)
 
 def generate_path(K, z):
-    # K -- Kalman gain, z -- random seed
+    # K -- Kalman gain, z -- random seed (set when testing)
     # generates a path from the initial state X0 with Kalman gain K
     # returns a list of states, a list of observations, and a list of state estimations from the path
 
-    np.random.seed(z)  # set random seed
+    # np.random.seed(z)  # set random seed for testing purpose
     X = X0  # initial state
     X_hat = X0  # initial state estimate
     L_state = []  # a list that stores the states in a path
@@ -123,6 +123,7 @@ def stochastic_gradient_descent(K, n, alpha, z):
     # performs gradient descent using dF/dK as gradient
     # returns K, a list of F at each gradient step, a list of dF/dK at each gradient step
 
+    np.random.seed(z)  # set random seed
     err_L = []
     grad_L = []
     for i in range(n):
@@ -137,39 +138,39 @@ def stochastic_gradient_descent(K, n, alpha, z):
 
     return K, err_L, grad_L
 
-def Stochastic_gradient_descent(K, n,alpha, z):
-    # a wrapper function that calls stochastic_gradient_descent(K, n, alpha, z) and plots F vs n, log(dF/dK) vs n
-    print("Initialization: K11 is {}, K12 is {}".format(K[0][0], K[1][0]))
+def Stochastic_gradient_descent(K0, n,alpha, z_l):
+    # z_l -- a list of random seeds
+    # a wrapper function that calls stochastic_gradient_descent(K, n, alpha, z) for z in z_l \
+    # and plots F vs n
+
+    print("Initialization: K11 is {}, K12 is {}".format(K0[0][0], K0[1][0]))
+    K_avg = np.array([[0.0], [0.0]])
+    err_avg = np.zeros(n)
+
     # plots F vs n
-    K, err_L, grad_L = stochastic_gradient_descent(K, n, alpha, z)
-    print("After {:d} iterations, K11 becomes {:.3f}, K12 becomes {:.3f}. The final loss is {:.3f}".format(n, K[0][0], K[1][0], err_L[-1]))
+    for z in z_l:
+        K, err_L, grad_L = stochastic_gradient_descent(K0, n, alpha, z)
+        print("Seed {}: After {:d} iterations, K11 is {:.3f}, K12 is {:.3f}. The final loss is {:.3f}".\
+              format(z, n, K[0][0], K[1][0], err_L[-1]))
+        print("Gradient for each iteration", grad_L)
+        K_avg += K
+        err_avg += err_L
+
+    K_avg = K_avg/len(z_l)
+    err_avg = err_avg/len(z_l)
+
+    print("Averaging over {} random seeds, K11 is {:.3f}, K12 is {:.3f}. The final loss is {:.3f}".\
+          format(len(z_l), K_avg[0][0], K_avg[1][0], err_avg[-1]))
 
     x = [i for i in range(n)]
-    plt.plot(x, err_L)
-    plt.title("Stochastic gradient descent with {} steps and step size {}".format(str(n),str(alpha)))
+    plt.plot(x, err_avg)
+    plt.title("Stochastic gradient descent with {} steps and step size {}, averaged over {} random seeds".\
+              format(str(n),str(alpha),str(len(z_l))))
     plt.xlabel("number of gradient descent steps")
     plt.ylabel("mean squared error of one simulation")
     plt.show()
 
-    # plots the change of F in the last 100 steps
-    plt.plot(err_L[n-100: n])
-    plt.title("Errors in the last 100 steps")
-    plt.ylabel("mean squared error of one simulation")
-    plt.show()
-
-    grad1_L = [grad_L[i][0][0] for i in range(n)]
-    grad2_L = [grad_L[i][0][1] for i in range(n)]
-    log_grad1_L = [math.log10(abs(grad1_L[i])) for i in range(n)]
-    log_grad2_L = [math.log10(abs(grad2_L[i])) for i in range(n)]
-    plt.plot(x, log_grad1_L, label='grad1')
-    plt.plot(x, log_grad2_L, label='grad2')
-    plt.title("Stochastic gradient descent with {} steps and step size {}".format(str(n), str(alpha)))
-    plt.xlabel("number of gradient descent steps")
-    plt.ylabel("log10(gradient)")
-    plt.legend()
-    plt.show()
-
-    return K, err_L, grad_L
+    return K_avg, err_avg
 
 ######## Testing code ###########
 def finite_diff_approx(K, delta_K, z):
@@ -257,11 +258,12 @@ def check_order(K, delta_K, z, n):
     plt.show()
 
 
-K = np.array([[1.0], [1.0]])
+K = np.array([[5.0], [5.0]])
 
 # check_order(K, 0.0001, 1, 10)
 
-K_, err_L, grad_L = Stochastic_gradient_descent(K, 1000, 0.1, 1)
-print("------Train history------")
-print("Loss for each iteration:", err_L)
-print("Gradient for each iteration:", grad_L)
+K_, err_L = Stochastic_gradient_descent(K, 10000, 0.0001, [1, 5, 10, 20, 27])
+# print("------Train history------")
+# print("Loss for each iteration:", err_L)
+
+

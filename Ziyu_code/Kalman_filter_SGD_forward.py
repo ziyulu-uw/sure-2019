@@ -52,11 +52,11 @@ R = R.real
 # print(R)
 
 def compute_gradient(K, z):
-    # K -- Kalman gain, z -- random seed
+    # K -- Kalman gain, z -- random seed (set when testing)
     # computes dF/dK, where F = 1/2N * \sum_{n=1}^N (X_hat_n-X_n)^2
     # returns dF/dK, F
 
-    np.random.seed(z)  # set random seed
+    # np.random.seed(z)  # set random seed for testing purpose
     X = X0  # initial state
     X_hat = X0  # initial state estimate
     dX_hat = np.zeros((2, 2))  # initial gradient dX_hat/dK
@@ -104,30 +104,33 @@ def stochastic_gradient_descent(K, n, alpha, z):
     return K, err_L, grad_L
 
 
-def Stochastic_gradient_descent(K, n, alpha, z):
-    # a wrapper function that calls stochastic_gradient_descent(K, n, alpha, z) and plots F vs n, log(dF/dK) vs n
+def Stochastic_gradient_descent(K, n, alpha, z_l):
+    # z_l -- a list of random seeds
+    # a wrapper function that calls stochastic_gradient_descent(K, n, alpha, z) for z in z_l
+    # and plots F vs n
+
     print("Initialization: K11 is {}, K12 is {}".format(K[0][0], K[1][0]))
-    K, err_L, grad_L = stochastic_gradient_descent(K, n, alpha, z)
-    print("After {:d} iterations, K11 becomes {:.3f}, K12 becomes {:.3f}. The final loss is {:.3f}".format(n, K[0][0], K[1][0], err_L[-1]))
+    K_avg = np.array([[0.0], [0.0]])
+    err_avg = np.zeros(n)
+
+    for z in z_l:
+        K, err_L, grad_L = stochastic_gradient_descent(K, n, alpha, z)
+        print("Seed {}: After {:d} iterations, K11 becomes {:.3f}, K12 becomes {:.3f}. The final loss is {:.3f}".\
+              format(z, n, K[0][0], K[1][0], err_L[-1]))
+        print("Gradient for each iteration", grad_L)
+        K_avg += K
+        err_avg += err_L
+
+    print("Averaging over {} random seeds, K11 is {:.3f}, K12 is {:.3f}. The final loss is {:.3f}". \
+          format(len(z_l), K_avg[0][0], K_avg[1][0], err_avg[-1]))
 
     x = [i for i in range(n)]
-    plt.plot(x, err_L)
+    plt.plot(x, err_avg)
     plt.title("Stochastic gradient descent with {} steps and step size {}".format(str(n), str(alpha)))
     plt.xlabel("number of gradient descent steps")
     plt.ylabel("mean squared error of one simulation")
     plt.show()
 
-    grad1_L = [grad_L[i][0][0] for i in range(n)]
-    grad2_L = [grad_L[i][0][1] for i in range(n)]
-    log_grad1_L = [math.log10(abs(grad1_L[i])) for i in range(n)]
-    log_grad2_L = [math.log10(abs(grad2_L[i])) for i in range(n)]
-    plt.plot(x, log_grad1_L, label='grad1')
-    plt.plot(x, log_grad2_L, label='grad2')
-    plt.title("Stochastic gradient descent with {} steps and step size {}".format(str(n), str(alpha)))
-    plt.xlabel("number of gradient descent steps")
-    plt.ylabel("log10(gradient)")
-    plt.legend()
-    plt.show()
 
 K = np.array([[1.0], [1.0]])
-Stochastic_gradient_descent(K, 1000, 0.1, 1)
+Stochastic_gradient_descent(K, 1000, 0.1, [1,2,3])
