@@ -72,8 +72,8 @@ def check_order(K, delta_K, z, n):
     # by plotting the norm of approximation error against the difference
     # the plot should be linear
 
-    x_L = []
-    y_L = []
+    x_L = [0]
+    y_L = [0]
     L_state, L_obs, L_est = pgen.generate_path(K, 1)
     grad = comp.compute_gradient(K, L_state, L_obs, L_est)
     # print(np.linalg.norm(grad))
@@ -86,9 +86,10 @@ def check_order(K, delta_K, z, n):
         y_L.append(np.linalg.norm(grad_approx - grad))
 
     norm1 = np.linalg.norm(grad)
-    norm2 = y_L[0]
+    norm2 = y_L[1]
     print(norm2/norm1)
     plt.plot(x_L, y_L)
+    plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
     plt.title("First order finite difference approximation of dF/dK")
     plt.xlabel("delta_K")
     plt.ylabel("Frobenius norm of (grad_approx - grad)")
