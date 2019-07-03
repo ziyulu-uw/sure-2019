@@ -67,7 +67,7 @@ def finite_diff_approx(K, delta_K, z):
 
 def check_order(K, delta_K, z, n):
     # K -- Kalman gain, delta_K -- difference in finite difference approximation, \
-    # z -- random seed, n -- largest multiple of delta_K
+    # z -- random seed, n -- number of multiples of delta_K
     # checks if the above first order approximation works properly \
     # by plotting the norm of approximation error against the difference
     # the plot should be linear
@@ -77,20 +77,21 @@ def check_order(K, delta_K, z, n):
     L_state, L_obs, L_est = pgen.generate_path(K, 1)
     grad = comp.compute_gradient(K, L_state, L_obs, L_est)
     # print(np.linalg.norm(grad))
-    print(grad)  # This is the gradient computed by formulas
+    print("direct gradient computation", grad)  # This is the gradient computed by formulas
     for i in range(n):
         delta_K_n = delta_K * (i+1)
         grad_approx, F = finite_diff_approx(K, delta_K_n, z)
-        print(grad_approx)  # This is the gradient given by finite difference approximation
+        print("gradient approximation with delta_K = {}".format(delta_K_n),grad_approx)  # This is the gradient given by finite difference approximation
         x_L.append(delta_K_n)
         y_L.append(np.linalg.norm(grad_approx - grad))
 
     norm1 = np.linalg.norm(grad)
     norm2 = y_L[1]
-    print(norm2/norm1)
+    print("norm of smallest difference/norm of gradient", norm2/norm1)
     plt.plot(x_L, y_L)
     plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-    plt.title("First order finite difference approximation of dF/dK")
+    plt.rcParams["axes.titlesize"] = 10
+    plt.title("First order finite difference approximation of dF/dK with K = {}, N = {}, dt = {}".format(K, init.N, init.dt))
     plt.xlabel("delta_K")
     plt.ylabel("Frobenius norm of (grad_approx - grad)")
     plt.show()
