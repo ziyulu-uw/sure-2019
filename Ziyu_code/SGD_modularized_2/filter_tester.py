@@ -11,18 +11,18 @@ import loss_gradient_computation
 def test(X0, A, C, N, R, S, K):
     # X0 -- initial state, A -- state transition matrix, C -- observation matrix, \
     # N -- number of total time steps, R -- system noise covariance matrix, S -- observation noise covariance matrix, \
-    # K -- optimal Kalman gain
+    # K -- transpose of optimal Kalman gain
     # tests the performance of K on 10 random Kalman filtering problems
     # returns the average error
-    # this error should be approximately equal to or slightly larger than the final loss of SGD
+    # this error should be approximately equal to the final loss of SGD
 
     d_X = len(X0)  # dimension of state
     d_Z = len(C)  # dimension of observation
     avg_F = 0
     for i in range(10):
-        W_l = noise_generation.system_noise_generator(d_X, N, R)
-        V_l = noise_generation.observation_noise_generator(d_Z, N, S)
-        X_l, Z_l = path_generation.path_generator(X0, A, C, N, W_l, V_l)
+        W = noise_generation.system_noise_generator(d_X, N, R)
+        V = noise_generation.observation_noise_generator(d_Z, N, S)
+        X_l, Z_l = path_generation.path_generator(X0, A, C, N, W, V)
         X_hat_l = path_generation.filtered_path_generator(X0, A, C, K, Z_l, N)
         F = loss_gradient_computation.compute_loss(X_l, X_hat_l, N)
         avg_F += F

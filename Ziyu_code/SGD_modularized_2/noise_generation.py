@@ -8,28 +8,26 @@ import numpy as np
 
 def observation_noise_generator(d_Z, N, S):
     #  d_Z -- dimension of observation, N -- number of total time steps, S -- covariance matrix of observation noise
-    #  returns a sequence of gaussian observation noise with mean 0 covariance S
-    V_l = []
+    #  returns a sequence of gaussian observation noise with mean 0 covariance S \
+    #  as a 2d array V, each column V[:,i] is a noise vector
+    V = np.zeros((d_Z, N))
+    mu = np.zeros(d_Z)
     for i in range(N):
 
-        V_n = np.random.multivariate_normal([0]*d_Z, S)
-        V_n = np.array(V_n, ndmin=2)
-        V_n = np.transpose(V_n)
-        V_l.append(V_n)
+        V[:, i] = np.random.multivariate_normal(mu, S)
 
-    return V_l
+    return V
 
 
 def system_noise_generator(d_X, N, R):
     #  d_X -- dimension of state, N -- number of total time steps, R -- covariance matrix of system noise
-    #  returns a sequence of gaussian system noise with mean 0 covariance R
-    W_l = []
+    #  returns a sequence of gaussian system noise with mean 0 covariance R \
+    #  as a 2d array W, each column W[:,i] is a noise vector
+    W = np.zeros((d_X, N))
+    mu = np.zeros(d_X)
     for i in range(N):
 
-        W_n = np.random.multivariate_normal([0]*d_X, R)
-        W_n = np.array(W_n, ndmin=2)
-        W_n = np.transpose(W_n)
-        W_l.append(W_n)
+        W[:, i] = np.random.multivariate_normal(mu, R)
 
-    return W_l
+    return W
 
