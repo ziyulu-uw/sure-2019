@@ -22,12 +22,12 @@ def test(X0, A, C, N, R, S, K):
     for i in range(10):
         W = noise_generation.system_noise_generator(d_X, N, R)
         V = noise_generation.observation_noise_generator(d_Z, N, S)
-        X_l, Z_l = path_generation.path_generator(X0, A, C, N, W, V)
-        X_hat_l = path_generation.filtered_path_generator(X0, A, C, K, Z_l, N)
-        F = loss_gradient_computation.compute_loss(X_l, X_hat_l, N)
+        X, Z = path_generation.path_generator(X0, A, C, N, W, V)
+        X_hat = path_generation.filtered_path_generator(X0, A, C, K, Z, N)
+        F = loss_gradient_computation.compute_loss(X, X_hat, N)
         avg_F += F
 
     avg_F = avg_F/10
-    print("Testing result: {:.3f}".format(avg_F))
+    print("Testing result:{:10.2e}".format(avg_F))
 
     return avg_F

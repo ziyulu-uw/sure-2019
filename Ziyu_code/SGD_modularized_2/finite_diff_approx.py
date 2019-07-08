@@ -18,16 +18,16 @@ def finite_diff_approx(X0, A, C, N, W, V, K, delta_K):
     grad_approx = np.array([0.0]*len(K))
 
     # compute F(K)
-    X_l, Z_l = path_generation.path_generator(X0, A, C, N, W, V)
-    X_hat_l = path_generation.filtered_path_generator(X0, A, C, K, Z_l, N)
-    F = loss_gradient_computation.compute_loss(X_l, X_hat_l, N)
+    X, Z = path_generation.path_generator(X0, A, C, N, W, V)
+    X_hat = path_generation.filtered_path_generator(X0, A, C, K, Z, N)
+    F = loss_gradient_computation.compute_loss(X, X_hat, N)
 
     # compute F(K+delta_K)
     for i in range(len(K)):
 
         K[i] += delta_K
-        X_hat_l_ = path_generation.filtered_path_generator(X0, A, C, K, Z_l, N)
-        F_ = loss_gradient_computation.compute_loss(X_l, X_hat_l_, N)
+        X_hat_ = path_generation.filtered_path_generator(X0, A, C, K, Z, N)
+        F_ = loss_gradient_computation.compute_loss(X, X_hat_, N)
         grad_approx[i] = (F_ - F)/delta_K
         K[i] -= delta_K
 

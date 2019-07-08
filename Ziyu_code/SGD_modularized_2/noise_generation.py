@@ -30,4 +30,3 @@ def system_noise_generator(d_X, N, R):
         W[:, i] = np.random.multivariate_normal(mu, R)
 
     return W
-

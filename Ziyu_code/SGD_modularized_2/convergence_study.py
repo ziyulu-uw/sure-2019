@@ -19,15 +19,15 @@ def conv_study(X0, A, C, N, dt, W, V, K, delta_K):
     # by plotting the norm of approximation error against the difference with log scaling on both axes
     # the plot should be linear
 
-    X_l, Z_l = path_generation.path_generator(X0, A, C, N, W, V)
-    X_hat_l  = path_generation.filtered_path_generator(X0, A, C, K, Z_l, N)
-    grad     = loss_gradient_computation.compute_gradient(A, C, N, K, X_l, Z_l, X_hat_l)
-    n        = 10  # number of finite difference approximations to compute
+    X, Z = path_generation.path_generator(X0, A, C, N, W, V)
+    X_hat = path_generation.filtered_path_generator(X0, A, C, K, Z, N)
+    grad = loss_gradient_computation.compute_gradient(A, C, N, K, X, Z, X_hat)
+    n = 10  # number of finite difference approximations to compute
     # print(np.linalg.norm(grad))
     print("direct gradient computation", grad)  # This is the gradient computed by formulas
 
     step_sizes = []  # delta K values
-    errors     = []  # norm of finite difference error
+    errors = []  # norm of finite difference error
 
     print("----- finite difference approximation -----")
     print("  delta K       dF/dK_1         dF/dK_2      K_1 error  K_2 error error_norm  conv_factor")
