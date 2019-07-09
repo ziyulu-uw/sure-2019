@@ -23,10 +23,14 @@ def Stochastic_gradient_descent(X0, A, C, N, R, S, K0, n, alpha, s_l):
 
     # plots F vs n
     print("After {} iterations of stochastic gradient descent:".format(n))
-    print("seed      K1            K2         InitialLoss    FinalLoss")
+    print("seed      K1            K2         InitialLoss    FinalLoss  First_10_Gradients")
     for s in s_l:
         K, F_l, grad_l = SGD.stochastic_gradient_descent(X0, A, C, N, R, S, K0, n, alpha, s)
-        print("{:2d}    {:10.2e}    {:10.2e}    {:10.2e}    {:10.2e}".format(s, K[0], K[1], F_l[0], F_l[-1]))
+        grad_to_print = ""
+        for i in range(10):
+            grad_to_print += "[{:10.2e} {:10.2e}]  ".format(grad_l[i][0], grad_l[i][1])
+        print("{:2d}    {:10.2e}    {:10.2e}    {:10.2e}    {:10.2e}   ".format(s, K[0], K[1], F_l[0], F_l[-1])\
+              + grad_to_print)
         K_avg += K
         F_avg += F_l
 
