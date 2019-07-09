@@ -27,7 +27,7 @@ def compute_gradient(A, C, N, K, X, Z, X_hat):
     # returns dF/dK
     d_X = len(X)
     K = np.array(K, ndmin=2).transpose()  # reshape to the right dimension
-    Q = np.array([0, 0])
+    Q = 0
     P = 2*(X_hat[:, N] - X[:, N])  # start with P_N = 2*(\hat{X_N} - X_N)^T
 
     for i in range(N-1, -1, -1):  # move backward
