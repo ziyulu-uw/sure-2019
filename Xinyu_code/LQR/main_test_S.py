@@ -6,13 +6,13 @@
 import numpy as np
 from numpy import linalg as la
 import matplotlib.pyplot as plt
-from initialization import *
-from tensor_tool import transpose
 import process_generator
 import stat_analysis
-from stat_analysis import covariance
 import Model_tools
 import EigenTest
+from initialization import *
+from tensor_tool import transpose
+from stat_analysis import covariance
 
 '''--------------------------Formula of S------------------------------'''
 print("********** verify the formula of S is correct ************\n")
