@@ -3,7 +3,6 @@
 # Date: July 2019
 # Description: This program uses optimization methods in PyTorch for the Kalman filter optimization problem
 
-# from initialization import *
 import torch
 import numpy as np
 import noise_generation
@@ -136,10 +135,5 @@ def RMSprop(X0, A, C, N, R, S, K, n, alpha, s):
 
     return K, F_l, grad_l
 
-# K = np.array([1.0, 1.0])
-# final_K, F_l, grad_l = RMSprop(X0, A, C, N, R, S, K, n=4, alpha=0.1, s=1)
-# print(final_K)
-# print(F_l)
-# print(grad_l)
 
 
