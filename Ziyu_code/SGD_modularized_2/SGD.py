@@ -33,8 +33,8 @@ def stochastic_gradient_descent(X0, A, C, N, R, S, K, n, alpha, s):
         grad = loss_gradient_computation.compute_gradient(A, C, N, K, X, Z, X_hat)
         F_l.append(F)
         grad_l.append(grad)
-        # print(grad)
+        # print("grad", grad)
         K = K - alpha * grad
-        # print(K)
+        # print("K", K)
 
     return K, F_l, grad_l

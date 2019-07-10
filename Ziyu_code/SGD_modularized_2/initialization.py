@@ -15,13 +15,13 @@ gamma = 0.1  # friction coefficient
 omega = k/m
 mu = gamma/m
 w = math.sqrt(omega - 0.25*mu**2)
-N = 4  # number of time steps in one simulation
-dt = 0.05  # step size in one simulation
+N = 40  # number of time steps in one simulation
+dt = 0.5  # step size in one simulation
 sigma = 0.1  # noise coefficient in SDE
 # X0 = np.array([[1.0], [0.0]])
 X0 = np.array([1.0, 0.0])  # transpose of initial state
 C = np.array([1.0, 0.0], ndmin=2)  # observation matrix
-S = [[0.1]]  # observation noise covariance
+S = [[0.5]]  # observation noise covariance
 
 
 lambda1 = complex(-0.5*mu,w)
