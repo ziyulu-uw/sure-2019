@@ -27,7 +27,7 @@ def M_eval(G,display):
         Plot = False
         
     if display:
-        print("parameters G1 and G2: %15.2f, %15.2f"%(G1,G2))
+        print("parameters G1 and G2: %15.2f, %15.2f"%(G[0,0],G[0,1]))
         print("eigenvalues of M    : %5.5f+%5.5fj, %5.5f+%5.5fj"%(e_val[0].real,e_val[0].imag,e_val[1].real,e_val[1].imag))
         if Plot == True:
             print("STABLE")
@@ -48,7 +48,8 @@ def Stability_Region():
     
     for G1 in G1_list:
         for G2 in G2_list:
-            Plot = M_eval(G1,G2,display=False)
+            G    = np.array([[G1,G2]])
+            Plot = M_eval(G,display=False)
             if Plot:
                 posX.append(G1)
                 posY.append(G2)

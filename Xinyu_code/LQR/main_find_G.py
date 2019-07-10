@@ -1,8 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jul 10 11:18:03 2019
-
-@author: xinyuli
-"""
-
+# Author: Xinyu Li
+# Email: xl1796@nyu.edu
+# Date: July 2019
+# Description: find G use Newton Method
