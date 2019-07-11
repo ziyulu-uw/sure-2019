@@ -73,3 +73,6 @@ def S_dot(G1,G2,returnS1,returnXi,display):
         print("S dot w.r.t G%d (theoretically):"%(2-returnS1))
         print(S_Dot) 
     return S_Dot
+
+def H_matrix(G1,G2):
+    return np.array([[G1**2, 2*G1*G2, G2**2]])
