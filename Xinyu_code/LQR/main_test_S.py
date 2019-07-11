@@ -38,10 +38,9 @@ stat_analysis.Compare_EX2_and_S(X_,S_thm)      #compare and display results
 
 '''--------------------------Formula of dS----------------------------'''
 print("\n*********** verify xiS_dot = inv(I-D)xiU **************\n")
-
 stat_analysis.Compare_dS_formula_and_FD(G)
 
-'''--------------------------Formula of Cost----------------------------'''
+'''-------------------------Formula of Cost V---------------------------'''
 print("\n*********** verify Vn = tr(S) + r*tr(GSG.T) **************\n")
 
 ## Find S dot theoretically
@@ -51,6 +50,10 @@ S_dot2  = Model_tools.S_dot(G1,G2,returnS1=False,returnXi=False,display=False)
 ## Cost from simulation
 V       = process_generator.Cost_function(G,X)
 stat_analysis.Compare_V_and_Sformula(V,S_thm,G) #compare and display results
+
+'''-------------------------Formula of dV---------------------------'''
+print("\n******** verify dV = tr(dS) + r*tr(2GSdG.T+2GdSG.T) **********\n")
+stat_analysis.Compare_dV_formula_and_FD(G) #compare and display results
 
 
 

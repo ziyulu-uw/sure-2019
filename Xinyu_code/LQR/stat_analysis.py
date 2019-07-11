@@ -7,6 +7,7 @@ import numpy as np
 from tensor_tool import transpose
 from initialization import *
 import Model_tools
+import cost
 
 def covariance(X):
     '''calculate the covariance matrix
@@ -67,4 +68,32 @@ def Compare_dS_formula_and_FD(G):
     #S_dot2(G1,G2,returnS1=True,returnXi=False,display=True)
     print()
     
+def Compare_dV_formula_and_FD(G):
+    '''Compaore dV formula and the approx using finite difference'''
+    G1 = G[0,0]
+    G2 = G[0,1]
+    G  = [G1,G2]
+    V  = cost.cost_fun(G)
+
+    ## Differentiate w.r.t to G1
+    # Finite Difference Approximation
+    h  = 1e-10     #a small interval used in finite difference approximation
+    G1_f = h+G1
+    G_f  = np.array([G1_f,G2]) 
+    V_f  = cost.cost_fun(G_f)
+    V_D  = (V_f-V)/h
+    print("dV w.r.t G1\n Finite Difference Approx:\n",V_D)
+    dV   = cost.cost_der(G)
+    print(" dV = tr(dS) + r*tr(2GSdG.T+2GdSG.T) :\n",dV)
+    print()
+    ## Differentiate w.r.t to G1
+    G2_f = h+G2
+    G_f  = np.array([G1,G2_f]) 
+    V_f  = cost.cost_fun(G_f)
+    V_D  = (V_f-V)/h 
+    print("dV w.r.t G2\n Finite Difference Approx:\n",V_D)
+    dV   = cost.cost_der(G)
+    print(" dV = tr(dS) + r*tr(2GSdG.T+2GdSG.T) :\n",dV)
+    print()
+
    
