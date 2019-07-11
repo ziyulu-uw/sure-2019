@@ -18,9 +18,9 @@ n          = int(1e+4)                            #num of paths
 sigma      = 0.1                                  #coefficient in the noise
 
 ## constant parameters in alpha
-k          = 0.1
+k          = 2
 m          = 1
-gamma      = 0.05
+gamma      = 0.01
 alpha      = np.zeros([2,2])
 alpha[0,1] = 1
 alpha[1,0] = -k/m
@@ -29,7 +29,8 @@ alpha[1,1] = -gamma/m
 ## The derivative of xi_G
 xi_G1    = np.array([[1,0,0],[0,1,0]])
 xi_G2    = np.array([[0,1,0],[0,0,1]])
-    
+q        = np.array([[1,0,1]]) #a helpful constant matrix used in cost function
+  
 ## find xi_R (mathematical proof in Mass_Spring_Model_v3)
 w, U       = la.eig(alpha)                        #spectral decomposition: dot(a[:,:], U[:,i]) = w[i] * U[:,i] 
                                                   #w are eigenvalues, the columns of U are eigenvectors
