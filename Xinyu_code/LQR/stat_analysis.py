@@ -84,7 +84,7 @@ def Compare_dV_formula_and_FD(G):
     V_D  = (V_f-V)/h
     print("dV w.r.t G1\n Finite Difference Approx:\n",V_D)
     dV   = cost.cost_der(G)
-    print(" dV = tr(dS) + r*tr(2GSdG.T+2GdSG.T) :\n",dV)
+    print(" dV = tr(dS) + r*tr(2GSdG.T+2GdSG.T) :\n",dV[0])
     print()
     ## Differentiate w.r.t to G1
     G2_f = h+G2
@@ -93,7 +93,7 @@ def Compare_dV_formula_and_FD(G):
     V_D  = (V_f-V)/h 
     print("dV w.r.t G2\n Finite Difference Approx:\n",V_D)
     dV   = cost.cost_der(G)
-    print(" dV = tr(dS) + r*tr(2GSdG.T+2GdSG.T) :\n",dV)
+    print(" dV = tr(dS) + r*tr(2GSdG.T+2GdSG.T) :\n",dV[1])
     print()
 
    
