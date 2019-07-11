@@ -27,7 +27,7 @@ def M_eval(G,display):
         Plot = False
         
     if display:
-        print("parameters G1 and G2: %15.2f, %15.2f"%(G[0,0],G[0,1]))
+        print("parameters G1 and G2: %15.6f, %15.6f"%(G[0,0],G[0,1]))
         print("eigenvalues of M    : %5.5f+%5.5fj, %5.5f+%5.5fj"%(e_val[0].real,e_val[0].imag,e_val[1].real,e_val[1].imag))
         if Plot == True:
             print("STABLE")

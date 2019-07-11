@@ -25,15 +25,23 @@ G       = np.array([[G1, G2]])
 EigenTest.M_eval(G,display=False)
 
 ## Find out S from simulation
-X_      = process_generator.mass_spring_LQR(X_initial,G,Plot=False) #X_ records x,v at all time from 0 to t1
+X_      = process_generator.mass_spring_LQR(X_initial,G,Plot=True) #X_ records x,v at all time from 0 to t1
 X       = np.reshape(X_[:,-1,:],[n,2,1])                           #X at the final time
-S_sim   = process_generator.S_simulation(G,display=False,Plot=False) 
+print("1. verify formula of S by comparing it with simulation covariance:")
+S_sim   = process_generator.S_simulation(G,display=True,Plot=False) 
 
 ## Find out S theoretically
-S_thm   = Model_tools.S_matrix(G1,G2,returnXiS=False,display=False) 
+print("2. verify S = MSM.T+R:")
+S_thm   = Model_tools.S_matrix(G1,G2,returnXiS=False,display=True) 
+print("\n3. verify tr(S) = E|X|^2 by comparing it with X from simulation:")
 stat_analysis.Compare_EX2_and_S(X_,S_thm)      #compare and display results
 
-'''--------------------------Formula of S dot----------------------------'''
+'''--------------------------Formula of dS----------------------------'''
+print("\n*********** verify xiS_dot = inv(I-D)xiU **************\n")
+
+stat_analysis.Compare_dS_formula_and_FD(G)
+
+'''--------------------------Formula of Cost----------------------------'''
 print("\n*********** verify Vn = tr(S) + r*tr(GSG.T) **************\n")
 
 ## Find S dot theoretically

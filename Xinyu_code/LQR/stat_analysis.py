@@ -6,6 +6,7 @@
 import numpy as np
 from tensor_tool import transpose
 from initialization import *
+import Model_tools
 
 def covariance(X):
     '''calculate the covariance matrix
@@ -36,3 +37,34 @@ def Compare_V_and_Sformula(V,S,G):
     print("Cost (simulation):                %.10f" % V)
     print("tr(S+rGSG.T) (theoretical):       %.10f" % (np.trace(S)+r*np.trace(G@S@G.T)))
     print("r = %.2f"%r)
+
+def Compare_dS_formula_and_FD(G):
+    '''Compaore dS formula and the approx using finite difference'''
+    
+    G1 = G[0,0]
+    G2 = G[0,1]
+    S  = Model_tools.S_matrix(G1,G2,returnXiS=False,display=False)
+
+    ## Differentiate w.r.t to G1
+    # Finite Difference Approximation
+    h  = 1e-10     #a small interval used in finite difference approximation
+    G1_f = h+G1
+    S_f  = Model_tools.S_matrix(G1_f,G2,returnXiS=False,display=False)
+    S_D  = (S_f-S)/h
+    print("dS w.r.t G1\n Finite Difference Approx:\n",S_D)
+    dS   = Model_tools.S_dot(G1,G2,returnS1=True,returnXi=False,display=False)
+    print(" dS = inv(I-D) xi_u:\n",dS)
+    #S_dot2(G1,G2,returnS1=True,returnXi=False,display=True)
+    print()
+    ## Differentiate w.r.t to G1
+    G2_f = h+G2
+    S_f  = Model_tools.S_matrix(G1,G2_f,returnXiS=False,display=False)
+    S_D  = (S_f-S)/h 
+    print("dS w.r.t G2\n Finite Difference Approx:\n",S_D)
+    # dS formula
+    dS   = Model_tools.S_dot(G1,G2,returnS1=False,returnXi=False,display=False)
+    print(" dS = inv(I-D) xi_u:\n",dS)
+    #S_dot2(G1,G2,returnS1=True,returnXi=False,display=True)
+    print()
+    
+   
