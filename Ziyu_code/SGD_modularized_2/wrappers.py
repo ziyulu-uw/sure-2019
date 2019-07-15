@@ -5,7 +5,9 @@
 # which averages the results over a list of random seeds and plots the results
 
 import optimization
+import stability_check
 import numpy as np
+from numpy import linalg as LA
 import matplotlib.pyplot as plt
 
 
@@ -18,6 +20,12 @@ def wrapper(X0, A, C, N, R, S, K0, n, s_l, which, alpha, momentum=0):
     # a wrapper function that calls one of the optimization methods in optimization.py for s in s_l \
     # and plots F vs n
 
+    is_stable = stability_check.check_stability(A, C, K0)
+    if is_stable is False:
+        print("Filter dynamics is unstable. Choose another K0")
+        return
+    print("Filter dynamics is stable")
+
     print("Optimizing using {} algorithm".format(which))
     print("Initialization: K11 is {}, K12 is {}".format(K0[0], K0[1]))
     K_avg = np.array([0.0, 0.0])
@@ -25,7 +33,8 @@ def wrapper(X0, A, C, N, R, S, K0, n, s_l, which, alpha, momentum=0):
 
     # plots F vs n
     print("After {} iterations:".format(n))
-    print("seed      K1            K2         InitialLoss    FinalLoss  First_10_Gradients")
+    # print("seed      K1            K2         InitialLoss    FinalLoss  First_10_Gradients_norm")
+    print("seed      K1            K2         InitialLoss    FinalLoss    LargestGradient")
     for s in s_l:
         if which == 'SGD':
             K, F_l, grad_l = optimization.SGD(X0, A, C, N, R, S, K0, n, momentum, alpha, s)
@@ -37,11 +46,13 @@ def wrapper(X0, A, C, N, R, S, K0, n, s_l, which, alpha, momentum=0):
             print('Invalid algorithm')
             break
 
-        grad_to_print = ""
-        for i in range(10):
-            grad_to_print += "[{:10.2e} {:10.2e}]  ".format(grad_l[i][0], grad_l[i][1])
-        print("{:2d}    {:10.2e}    {:10.2e}    {:10.2e}    {:10.2e}   ".format(s, K[0], K[1], F_l[0], F_l[-1])\
-              + grad_to_print)
+        # grad_to_print = ""
+        # for i in range(10):
+        #     grad_to_print += "{:10.2e},".format(LA.norm(grad_l[i]))
+        # print("{:2d}    {:10.2e}    {:10.2e}    {:10.2e}    {:10.2e} ".format(s, K[0], K[1], F_l[0], F_l[-1])\
+        #       + grad_to_print)
+        print("{:2d}    {:10.2e}    {:10.2e}    {:10.2e}    {:10.2e}    {:10.2e}"\
+              .format(s, K[0], K[1], F_l[0], F_l[-1], np.amax(grad_l)))
         K_avg += K
         F_avg += F_l
 
@@ -53,6 +64,7 @@ def wrapper(X0, A, C, N, R, S, K0, n, s_l, which, alpha, momentum=0):
 
     x = [i for i in range(n)]
     plt.plot(x, F_avg)
+    plt.yscale("log")
     plt.rcParams["axes.titlesize"] = 8
     plt.title("{} algorithm with {} steps and step size {}, averaged over {} random seeds".\
               format(which, str(n),str(alpha),str(len(s_l))))

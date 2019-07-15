@@ -6,6 +6,7 @@
 import math
 import cmath
 import numpy as np
+from numpy import linalg as LA
 
 
 # constants
@@ -17,7 +18,7 @@ mu = gamma/m
 w = math.sqrt(omega - 0.25*mu**2)
 N = 40  # number of time steps in one simulation
 dt = 0.5  # step size in one simulation
-sigma = 0.1  # noise coefficient in SDE
+sigma = 1  # noise coefficient in SDE
 # X0 = np.array([[1.0], [0.0]])
 X0 = np.array([1.0, 0.0])  # transpose of initial state
 C = np.array([1.0, 0.0], ndmin=2)  # observation matrix
@@ -37,6 +38,17 @@ A = np.divide(A, lambda2-lambda1)  # A turns out to be real
 A = A.real
 
 # print(A)
+
+# Checks the stability of the state dynamics
+eigval, eigvec = LA.eig(A)
+# print(eigval)
+E = np.absolute(eigval)
+# print(E)
+for i in E:
+    if i > 1:
+        print("State dynamics is unstable")
+        break
+print("State dynamics is stable")
 
 # construct system noise covariance matrix R
 e1 = cmath.exp(2*lambda1*dt)

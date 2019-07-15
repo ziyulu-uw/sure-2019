@@ -21,8 +21,8 @@ import filter_tester
 # K = np.array([1.0, 1.0])  # transpose of Kalman gain
 # convergence_study.conv_study(X0, A, C, N, dt, W, V, K, delta_K=1e-6)
 
-###### SGD ######
-K = np.array([5.0, 5.0])
+###### gradient descent ######
+K = np.array([1.5, 1.9])
 # final_K, F_L = SGD_wrapper.Stochastic_gradient_descent(X0, A, C, N, R, S, K0=K, n=1000, alpha=1e-30, s_l=[1, 5, 10, 20, 27])
-final_K, F_L = wrappers.wrapper(X0, A, C, N, R, S, K0=K, n=5000, s_l=[1, 5, 10], which='RMSprop', alpha=0.5)
-test_loss = filter_tester.test(X0, A, C, N, R, S, final_K)
+final_K, F_L = wrappers.wrapper(X0, A, C, N, R, S, K0=K, n=200, s_l=[1, 5, 10, 20, 27], which='Adam', alpha=0.25)
+# test_loss = filter_tester.test(X0, A, C, N, R, S, final_K)
