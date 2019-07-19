@@ -22,7 +22,7 @@ def path_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U):
     X = np.zeros((N+1, d_X, 1))
     X_hat = np.zeros((N+1, d_X, 1))
     Z = np.zeros((N+1, d_Z, 1))
-    U = np.zeros((N, d_U, 1))
+    U = np.zeros((N+1, d_U, 1))
 
     X[0,:,:] = X0  # initial state
     X_hat[0,:,:] = X0  # initial state estimate
