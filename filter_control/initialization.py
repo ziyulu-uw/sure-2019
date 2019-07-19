@@ -21,7 +21,7 @@ dt = 0.5  # step size in one simulation
 sigma = 1  # noise coefficient in SDE
 X0 = np.array([[1.0], [0.0]])
 # X0 = np.array([1.0, 0.0])  # transpose of initial state
-C = np.array([1.0, 0.0], ndmin=2)  # observation matrix
+C = np.array([[1.0, 0.0]])  # observation matrix
 B = np.array([[0.0], [1.0]])  # control coefficient matrix
 S = [[0.5]]  # observation noise covariance
 d_X = 2  # dimension of state
