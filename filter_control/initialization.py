@@ -1,5 +1,5 @@
-# Author: Ziyu Lu
-# Email: zl1546@nyu.edu
+# Author: Ziyu Lu, Xinyu Li
+# Email: zl1546@nyu.edu, xl1796@nyu.edu
 # Date: July 2019
 # Description: This program defines all constant coefficients in the optimal filtering problem
 
@@ -19,12 +19,14 @@ w = math.sqrt(omega - 0.25*mu**2)
 N = 4  # number of time steps in one simulation
 dt = 0.5  # step size in one simulation
 sigma = 1  # noise coefficient in SDE
-# X0 = np.array([[1.0], [0.0]])
-X0 = np.array([1.0, 0.0])  # transpose of initial state
+X0 = np.array([[1.0], [0.0]])
+# X0 = np.array([1.0, 0.0])  # transpose of initial state
 C = np.array([1.0, 0.0], ndmin=2)  # observation matrix
-B = np.array([0.0, 1.0])  # transpose of control coefficient matrix
-d_U = 1  # dimension of control
+B = np.array([[0.0], [1.0]])  # control coefficient matrix
 S = [[0.5]]  # observation noise covariance
+d_X = 2  # dimension of state
+d_Z = 1  # dimension of observation
+d_U = 1  # dimension of control
 
 
 lambda1 = complex(-0.5*mu,w)
