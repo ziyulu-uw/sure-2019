@@ -24,6 +24,7 @@ X0 = np.array([[1.0], [0.0]])
 C = np.array([[1.0, 0.0]])  # observation matrix
 B = np.array([[0.0], [1.0]])  # control coefficient matrix
 S = [[0.5]]  # observation noise covariance
+r = 1.0  # scaling factor in the cost
 d_X = 2  # dimension of state
 d_Z = 1  # dimension of observation
 d_U = 1  # dimension of control
