@@ -28,9 +28,9 @@ def path_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U):
     for n in range(N):
         U[n, :, :] = G @ X_hat[n, :, :]  # control
         X[n + 1, :, :] = A @ X[n, :, :] + B @ U[n, :, :] + W[n, :, :]  # state update
-        Z[n + 1, :, :] = C @ X[n + 1, :, :] + V[n, :, :]  # observation
+        Z[n + 1, :, :] = C @ X[n + 1, :, :] + V[n, :, :]               # observation
         grp1 = A @ X_hat[n, :, :] + B @ U[n, :, :]
-        X_hat[n + 1, :, :] = grp1 + K @ (Z[n + 1, :, :] - C @ grp1)  # state estimate
+        X_hat[n + 1, :, :] = grp1 + K @ (Z[n + 1, :, :] - C @ grp1)    # state estimate
 
     return X, Z, U, X_hat
 

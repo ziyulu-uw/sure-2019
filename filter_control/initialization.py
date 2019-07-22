@@ -11,19 +11,22 @@ from numpy import linalg as LA
 
 # constants
 m = 1   # mass of the object
-k = 0.5  # spring constant
-gamma = 0.1  # friction coefficient
+k = 2.5  # spring constant
+gamma = 0.05  # friction coefficient
 omega = k/m
 mu = gamma/m
 w = math.sqrt(omega - 0.25*mu**2)
-N = 4  # number of time steps in one simulation
-dt = 0.5  # step size in one simulation
-sigma = 1  # noise coefficient in SDE
-X0 = np.array([[1.0], [0.0]])
+N = 40  # number of time steps in one simulation
+dt = 0.05  # step size in one simulation
+t = np.linspace(0,N*dt,N)
+sigma = 0.1  # noise coefficient in SDE
+x0 = 1.0
+v0 = 0.0
+X0 = np.array([[x0], [v0]])
 # X0 = np.array([1.0, 0.0])  # transpose of initial state
 C = np.array([[1.0, 0.0]])  # observation matrix
 B = np.array([[0.0], [1.0]])  # control coefficient matrix
-S = [[0.5]]  # observation noise covariance
+S = [[0.3]]  # observation noise covariance
 r = 1.0  # scaling factor in the cost
 d_X = 2  # dimension of state
 d_Z = 1  # dimension of observation
@@ -70,5 +73,5 @@ R = np.multiply(R, (sigma/(lambda2-lambda1))**2)  # R turns out to be real
 R = R.real
 
 # print(R)
-
+n = 20000 #num of path
 
