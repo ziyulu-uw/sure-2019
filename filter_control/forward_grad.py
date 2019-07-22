@@ -1,105 +1,61 @@
-# Author: Xinyu Li
-# Email: xl1796@nyu.edu
+# Author: Ziyu Lu
+# Email: zl1546@nyu.edu
 # Date: July 2019
 # Description: This program computes the gradients of F w.r.t. K and G for a given path using forward propagation
 
 import numpy as np
-# from initialization import *
-# from path_generation import path_generator
 
 
-def control_forward(X, X_hat, A, B, C, G, N, K, r, d_X):
-    """calculate dF/dG with forward propagation method
-    @parameter: X     - simulation result N*2*1
-                X_hat - estimation result N*2*1
-                A,B,C - constant matrices (seen in initialization.py)
-                        A 2*2, B 2*1, C 1*2
-                G     - control gain 1*2
-                N     - number of total time steps
-                K     - Kalman Filter 2*1
-                r     - scaling factor
-                d_X   - dimension of state
-    @return:   dF/dG: F is the total cost function, 
-                        return the gradient of F w.r.t G 
-                        1*2 """
+def forward_K(X, X_hat, Z, U, A, B, C, G, K, N, d_X, r):
+    # X -- list of states from one path, X_hat -- list of state estimations from one path, \
+    # Z -- list of observations from one path, U -- list of controls from one path, \
+    # A -- state transition matrix, B -- control coefficient matrix, C -- observation matrix, \
+    # G -- control gain, K -- Kalman gain, N -- number of total time steps, \
+    # d_X -- dimension of state, r -- scaling factor
+    # computes dF/dK, where F = 1/2N *\sum_{n=0}^N (X_n^TX_n + rU_n^TU_n), with U_N=0
+    # returns dF/dK (2-by-1)
 
-    # create an Identity matrix
-    I = np.eye(d_X)  # an identity matrix
+    dXn = np.zeros((2, 2))
+    dXHatn = np.zeros((2, 2))
+    dUn = G @ dXHatn
+    dF = np.zeros((1, 2))
+    dF += X[0, :, :].T @ dXn + r * U[0, :, :].T @ dUn
+    coef1 = A + B @ G
+    coef2 = K @ C @ A
+    for i in range(1, N+1):
 
-    # initial state
-    dXn_dG = np.zeros([2, 2])
-    dXnHat_dG = np.zeros([2, 2])
-    dF_dG = X[0, :, :].T @ dXn_dG  # we will divide dF/dG by N in the end
+        dXn_ = dXn
+        dXn = A @ dXn_ + B @ dUn
+        diag = Z[i, :, :] - C @ (A @ X_hat[i-1, :, :] + B @ U[i-1, :, :])
+        diag = np.array([1] * d_X) * diag[0][0]
+        dXHatn = coef1 @ dXHatn + np.diag(diag) + coef2 @ (dXn_ - dXHatn)
+        dUn = G @ dXHatn
+        dF += X[i, :, :].T @ dXn + r * U[i, :, :].T @ dUn
 
-    for i in range(N - 1):
-        # get the estimation at time i from the estimation result
-        XnHat  = X_hat[i, :, :]
-        Un     = G @ XnHat  # find the control and the gradient of U w.r.t G
-        dUn_dG = XnHat.T + G @ dXnHat_dG
-
-        # forward recurrence
-        temp        = (I - K @ C)@A + B @ G  # some matrix algebra that will be used
-        dXnHat_dG_1 = B @ X_hat[i, :, :].T + temp @ dXnHat_dG + K @ C @ A @ dXn_dG  # d hat{Xn+1}/ dG
-        dXn_dG_1    = A @ dXn_dG + B @ XnHat.T + B @ G @ dXnHat_dG  # d Xn+1/dG
-
-        # update the gradient of total cost function
-        dF_dG      += X[i + 1, :, :].T @ dXnHat_dG_1 + r * Un.T @ dUn_dG
-        
-        dXnHat_dG   =  dXnHat_dG_1
-        dXn_dG      =  dXn_dG_1 
-
-    return dF_dG / N
+    return dF.T/N
 
 
-def filter_forward(X, X_hat, Z, A, B, C, G, N, K, r, d_X):
-    """calculate dF/dG with forward propagation method
-    @parameter: X     - simulation result N*2*1
-                X_hat - estimation result N*2*1
-                Z     - observation CX+V N*1*1
-                A,B,C - constant matrices (seen in initialization.py)
-                        A 2*2, B 2*1, C 1*2
-                G     - control gain 1*2
-                N     - number of total time steps
-                K     - Kalman Filter 2*1
-                r     - scaling factor
-                d_X   - dimension of state
-    @return:   dF/dG: F is the total cost function, 
-                      return the gradient of F w.r.t G 
-                      1*2 """
+def forward_G(X, X_hat, U, A, B, C, G, K, N, d_X, r):
+    # X -- list of states from one path, X_hat -- list of state estimations from one path, \
+    # U -- list of controls from one path, \
+    # A -- state transition matrix, B -- control coefficient matrix, C -- observation matrix, \
+    # G -- control gain, K -- Kalman gain, N -- number of total time steps, \
+    # d_X -- dimension of state, r -- scaling factor
+    # computes dF/dG, where F = 1/2N *\sum_{n=0}^N (X_n^TX_n + rU_n^TU_n), with U_N=0
+    # returns dF/dG (1-by-2)
 
-    # initial state
-    dXn_dK = np.zeros([2, 2])
-    dXnHat_dK = np.zeros([2, 2])
-    dF_dK = X[0, :, :].T @ dXn_dK  # we will divide dF/dG by N in the end
+    dXn = np.zeros((2, 2))
+    dXHatn = np.zeros((2, 2))
+    dUn = X_hat[0, :, :].T + G @ dXHatn
+    dF = np.zeros((1, 2))
+    dF += X[0, :, :].T @ dXn + r * U[0, :, :].T @ dUn
+    coef1 = np.identity(d_X) - K @ C
+    coef2 = A + B @ G
+    for i in range(1, N+1):
 
-    for i in range(N - 1):
-        # get the estimation at time i from the estimation result
-        XnHat = X_hat[i, :, :]
-        Un = G @ XnHat  # find the control and the gradient of U w.r.t G
-        dUn_dK = G @ dXnHat_dK
+        dXn = A @ dXn + B @ dUn
+        dXHatn = coef1 @ coef2 @ dXHatn + coef1 @ B @ X_hat[i-1, :, :].T + K @ C @ dXn
+        dUn = X_hat[i, :, :].T + G @ dXHatn
+        dF += X[i, :, :].T @ dXn + r * U[i, :, :].T @ dUn
 
-        # forward recurrence
-        temp = np.diag(Z[i + 1, :, :] - C @ (A + B @ G) @ XnHat)[0]*np.eye(2)
-        
-        dXnHat_dK_1 = (A + B @ G) @ dXnHat_dK + temp + K @ C @ A @ (dXn_dK - dXnHat_dK)  # d hat{Xn+1}/dK
-        dXn_dK_1 = A @ dXn_dK + B @ G @ dXnHat_dK  # d Xn+1/dK
-        # update the gradient of total cost function
-        dF_dK += X[i + 1, :, :].T @ dXnHat_dK_1 + r * Un.T @ dUn_dK
-        # print("dF_dK",dF_dK/N)
-        #print(X[i+1,:,:].T@dXnHat_dK_1)
-    
-        # update dX^/dK, dX/dK
-        dXnHat_dK = dXnHat_dK_1
-        dXn_dK    = dXn_dK_1
-        
-    return dF_dK / N
-
-
-# d_X = len(X0)
-# d_Z = 1
-# K = np.array([[1.5, 1.9]]).T
-# G = np.array([[-0.01, -0.01]])
-#
-# X, Z, U, X_hat = path_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U)
-# dF_dG = Control_forward(X, X_hat, A, B, C, G, K, r)
-# dF_dK = Filter_forward(X, X_hat, Z, A, B, C, G, K, r)
+    return dF/N

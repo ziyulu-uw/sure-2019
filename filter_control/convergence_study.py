@@ -27,12 +27,12 @@ def conv_study_K(X0, A, C, B, G, K, N, r, W, V, d_X, d_Z, d_U, delta_K, which):
     if which == 'B':
         grad_K, grad_G = backward_grad.compute_gradient(A, C, B, G, K, N, X, Z, U, X_hat, r, d_X)
     elif which == 'F':
-        grad_K = forward_grad.filter_forward(X, X_hat, Z, A, B, C, G, N, K, r, d_X)
+        grad_K = forward_grad.forward_K(X, X_hat, Z, U, A, B, C, G, K, N, d_X, r)
     else:
         print("Invalid argument")
 
-    n = 10  # number of finite difference approximations to compute
     grad_K = grad_K.transpose()
+    n = 10  # number of finite difference approximations to compute
     print("direct gradient computation", grad_K)  # This is the gradient computed by formulas
 
     # convergence study in K derivative
@@ -87,7 +87,7 @@ def conv_study_G(X0, A, C, B, G, K, N, r, W, V, d_X, d_Z, d_U, delta_G, which):
     if which == 'B':
         grad_K, grad_G = backward_grad.compute_gradient(A, C, B, G, K, N, X, Z, U, X_hat, r, d_X)
     elif which == 'F':
-        grad_G = forward_grad.control_forward(X, X_hat, A, B, C, G, N, K, r, d_X)
+        grad_G = forward_grad.forward_G(X, X_hat, U, A, B, C, G, K, N, d_X, r)
     else:
         print("Invalid argument")
 

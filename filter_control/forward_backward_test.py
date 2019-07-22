@@ -25,12 +25,13 @@ for i in range(1000):
     G = np.random.rand(1, 2)
     X, Z, U, X_hat = path_generation.path_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U)
     B_grad_K, B_grad_G = backward_grad.compute_gradient(A, C, B, G, K, N, X, Z, U, X_hat, r, d_X)
-    F_grad_K = forward_grad.filter_forward(X, X_hat, Z, A, B, C, G, N, K, r, d_X)
-    F_grad_K = F_grad_K.transpose()
-    F_grad_G = forward_grad.control_forward(X, X_hat, A, B, C, G, N, K, r, d_X)
+    F_grad_K = forward_grad.forward_K(X, X_hat, Z, U, A, B, C, G, K, N, d_X, r)
+    F_grad_G = forward_grad.forward_G(X, X_hat, U, A, B, C, G, K, N, d_X, r)
 
     grad_K_diff = B_grad_K - F_grad_K
+    # print(grad_K_diff)
     grad_G_diff = B_grad_G - F_grad_G
+    # print(grad_G_diff)
     grad_K_diff_norm.append(LA.norm(grad_K_diff))
     grad_G_diff_norm.append(LA.norm(grad_G_diff))
 

@@ -12,7 +12,7 @@ def compute_gradient(A, C, B, G, K, N, X, Z, U, X_hat, r, d_X):
     # X -- list of states from one path, Z -- list of observations from one path, \
     # U -- list of controls from one path, X_hat -- list of state estimations from one path, \
     # r -- scaling factor, d_X -- dimension of state
-    # computes dF/dK, dF/dG, where F = 1/2N *\sum_{n=1}^N (X_n^TX_n + rU_n^TU_n)
+    # computes dF/dK, dF/dG, where F = 1/2N *\sum_{n=0}^N (X_n^TX_n + rU_n^TU_n), with U_N=0
     # returns dF/dK, dF/dG
 
     P = np.zeros((1, 2))

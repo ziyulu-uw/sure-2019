@@ -13,13 +13,13 @@ import performance_test
 
 
 ###### gradient testing ######
-# np.random.seed(4)  # set random seed so the result can be reproduced
-# W = noise_generation.system_noise_generator(d_X, N, R)
-# V = noise_generation.observation_noise_generator(d_Z, N, S)
-# K = np.array([[1.0], [1.0]])  # Kalman gain
-# G = np.array([[1.0, 1.0]])  # control gain
-# convergence_study.conv_study_K(X0, A, C, B, G, K, N, r, W, V, d_X, d_Z, d_U, delta_K=1e-3, which='B')
-# convergence_study.conv_study_G(X0, A, C, B, G, K, N, r, W, V, d_X, d_Z, d_U, delta_G=1e-4, which='B')
+np.random.seed(4)  # set random seed so the result can be reproduced
+W = noise_generation.system_noise_generator(d_X, N, R)
+V = noise_generation.observation_noise_generator(d_Z, N, S)
+K = np.array([[1.0], [1.0]])  # Kalman gain
+G = np.array([[1.0, 1.0]])  # control gain
+convergence_study.conv_study_K(X0, A, C, B, G, K, N, r, W, V, d_X, d_Z, d_U, delta_K=1e-3, which='B')
+convergence_study.conv_study_G(X0, A, C, B, G, K, N, r, W, V, d_X, d_Z, d_U, delta_G=1e-4, which='B')
 ###### gradient descent ######
 K = np.array([[1.0], [2.0]])  # initial Kalman gain
 G = np.array([[2.0, 1.0]])  # initial control gain
