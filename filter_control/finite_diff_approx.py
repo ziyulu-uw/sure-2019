@@ -7,6 +7,7 @@ import numpy as np
 import path_generation
 import loss_computation
 
+"""a remark: 虽然seed一样的，但是没有必要simulate两遍，考虑直接把X，Z，U，X_hat带进来？"""
 
 def finite_diff_approx_K(X0, A, C, B, G, K, N, r, W, V, d_X, d_Z, d_U, delta_K):
     # X0 -- initial state, A -- state transition matrix, C -- observation matrix, \
@@ -18,7 +19,7 @@ def finite_diff_approx_K(X0, A, C, B, G, K, N, r, W, V, d_X, d_Z, d_U, delta_K):
     # performs first order finite difference approximation of dF/dK: dF/dK = (F(K+delta_K) - F(K))/delta_K
     # returns the finite difference approximation of dF/dK
 
-    grad_approx_K = np.array([[0, 0]])
+    grad_approx_K = np.zeros([1,2])
 
     # compute F(K)
     X, Z, U, X_hat = path_generation.path_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U)
@@ -26,15 +27,13 @@ def finite_diff_approx_K(X0, A, C, B, G, K, N, r, W, V, d_X, d_Z, d_U, delta_K):
 
     # compute F(K+delta_K)
     for i in range(len(K)):
-
-        K[i][0] += delta_K
+        K[i,0] += delta_K
         X, Z, U, X_hat = path_generation.path_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U)
         F_ = loss_computation.compute_loss(X, U, N, r)
-        grad_approx_K[0][i] = (F_ - F)/delta_K
-        K[i][0] -= delta_K
-
+        grad_approx_K[0,i] = (F_ - F)/delta_K
+        K[i,0] -= delta_K
+        #print("F_ - F:",F_ - F)
     return grad_approx_K
-
 
 def finite_diff_approx_G(X0, A, C, B, G, K, N, r, W, V, d_X, d_Z, d_U, delta_G):
     # X0 -- initial state, A -- state transition matrix, C -- observation matrix, \
@@ -46,7 +45,9 @@ def finite_diff_approx_G(X0, A, C, B, G, K, N, r, W, V, d_X, d_Z, d_U, delta_G):
     # performs first order finite difference approximation of dF/dG: dF/dG = (F(G+delta_G) - F(G))/delta_G
     # returns the finite difference approximation of dF/dG
 
-    grad_approx_G = np.array([[0, 0]])
+    grad_approx_G = np.zeros([1,2])
+    '''grad_approx_G = np.array([[0,0]])
+    Caution:  np.array([[0,0]] dytype is int. Avoid using it'''
 
     # compute F(G)
     X, Z, U, X_hat = path_generation.path_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U)
@@ -54,10 +55,10 @@ def finite_diff_approx_G(X0, A, C, B, G, K, N, r, W, V, d_X, d_Z, d_U, delta_G):
 
     # compute G(G+delta_G)
     for i in range(len(G[0])):
-        G[0][i] += delta_G
+        G[0,i] += delta_G
         X, Z, U, X_hat = path_generation.path_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U)
         F_ = loss_computation.compute_loss(X, U, N, r)
-        grad_approx_G[0][i] = (F_ - F) / delta_G
-        G[0][i] -= delta_G
+        grad_approx_G[0,i] = (F_ - F) / delta_G
+        G[0,i] -= delta_G
 
     return grad_approx_G

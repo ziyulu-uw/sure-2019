@@ -33,18 +33,20 @@ def control_forward(X, X_hat, A, B, C, G, N, K, r, d_X):
 
     for i in range(N - 1):
         # get the estimation at time i from the estimation result
-        XnHat = X_hat[i, :, :]
-        Un = G @ XnHat  # find the control and the gradient of U w.r.t G
+        XnHat  = X_hat[i, :, :]
+        Un     = G @ XnHat  # find the control and the gradient of U w.r.t G
         dUn_dG = XnHat.T + G @ dXnHat_dG
 
         # forward recurrence
-        temp = A @ (I - K @ C) + B @ G  # some matrix algebra that will be used
-        dXnHat_dG = B @ X_hat[i, :, :].T + temp @ dXnHat_dG + K @ C @ A @ dXn_dG  # d hat{Xn+1}/ dG
-
-        dXn_dG = A @ dXn_dG + B @ XnHat.T + B @ G @ dXnHat_dG  # d Xn+1/dG
+        temp        = (I - K @ C)@A + B @ G  # some matrix algebra that will be used
+        dXnHat_dG_1 = B @ X_hat[i, :, :].T + temp @ dXnHat_dG + K @ C @ A @ dXn_dG  # d hat{Xn+1}/ dG
+        dXn_dG_1    = A @ dXn_dG + B @ XnHat.T + B @ G @ dXnHat_dG  # d Xn+1/dG
 
         # update the gradient of total cost function
-        dF_dG += X[i + 1, :, :].T @ dXnHat_dG + r * Un.T @ dUn_dG
+        dF_dG      += X[i + 1, :, :].T @ dXnHat_dG_1 + r * Un.T @ dUn_dG
+        
+        dXnHat_dG   =  dXnHat_dG_1
+        dXn_dG      =  dXn_dG_1 
 
     return dF_dG / N
 
@@ -77,13 +79,19 @@ def filter_forward(X, X_hat, Z, A, B, C, G, N, K, r, d_X):
         dUn_dK = G @ dXnHat_dK
 
         # forward recurrence
-        temp = np.reshape(np.diag(Z[i + 1, :, :] - C @ (A + B @ G) @ XnHat), [1, 1])
-        dXnHat_dK = (A + B @ G) @ dXnHat_dK + temp + K @ C @ A @ (dXn_dK - dXnHat_dK)  # d hat{Xn+1}/dK
-        dXn_dK = A @ dXn_dK + B @ XnHat.T + B @ G @ dXnHat_dK  # d Xn+1/dK
-
+        temp = np.diag(Z[i + 1, :, :] - C @ (A + B @ G) @ XnHat)[0]*np.eye(2)
+        
+        dXnHat_dK_1 = (A + B @ G) @ dXnHat_dK + temp + K @ C @ A @ (dXn_dK - dXnHat_dK)  # d hat{Xn+1}/dK
+        dXn_dK_1 = A @ dXn_dK + B @ G @ dXnHat_dK  # d Xn+1/dK
         # update the gradient of total cost function
-        dF_dK += X[i + 1, :, :].T @ dXnHat_dK + r * Un.T @ dUn_dK
-
+        dF_dK += X[i + 1, :, :].T @ dXnHat_dK_1 + r * Un.T @ dUn_dK
+        print("dF_dK",dF_dK/N)
+        #print(X[i+1,:,:].T@dXnHat_dK_1)
+    
+        # update dX^/dK, dX/dK
+        dXnHat_dK = dXnHat_dK_1
+        dXn_dK    = dXn_dK_1
+        
     return dF_dK / N
 
 

@@ -9,25 +9,32 @@ import noise_generation as noise
 import path_generation
 import backward_grad
 import forward_grad
+from finite_diff_approx import finite_diff_approx_K, finite_diff_approx_G
+from loss_computation import compute_loss
 
 grad_diff_1 = []
 grad_diff_2 = []
 err_diff = []
 
+np.random.seed(2)
 for i in range(1):
 
     W = noise.system_noise_generator(d_X, N, R)
     V = noise.observation_noise_generator(d_Z, N, S)
     K = np.array([[1.0], [1.0]])
-    G = np.array([[1.0, 1.0]])
+    G = np.array([[1.0, 2.0]])
     X, Z, U, X_hat = path_generation.path_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U)
     B_grad_K, B_grad_G = backward_grad.compute_gradient(A, C, B, G, K, N, X, Z, U, X_hat, r, d_X)
     F_grad_K = forward_grad.filter_forward(X, X_hat, Z, A, B, C, G, N, K, r, d_X)
     F_grad_G = forward_grad.control_forward(X, X_hat, A, B, C, G, N, K, r, d_X)
 
-    print(B_grad_K, B_grad_G)
-    print(F_grad_K, F_grad_G)
-
+    print("backward:",B_grad_K, B_grad_G)
+    print("forward:",F_grad_K, F_grad_G)
+    ffa = finite_diff_approx_K(X0, A, C, B, G, K, N, r, W, V, d_X = 2, d_Z = 1, d_U = 1, delta_K =0.001)
+    print("finite diff (K):",ffa)
+    ffb = finite_diff_approx_G(X0, A, C, B, G, K, N, r, W, V, d_X = 2, d_Z = 1, d_U = 1, delta_G =0.001)
+    print("finite diff (G):",ffb)
+    
     # K11 = 1 + np.random.rand()
     # K12 = 1 + np.random.rand()
     # seed = np.random.randint(2000)
@@ -48,7 +55,7 @@ for i in range(1):
     # grad_diff_2.append(abs(grad_diff[0][1]))
     #
     # err_diff.append(abs(errF - errB))
-
+    
 # print(max(grad_diff_1))
 # print(max(grad_diff_2))
 # print(np.mean(grad_diff_1))
