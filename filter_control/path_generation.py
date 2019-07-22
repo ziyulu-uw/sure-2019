@@ -6,10 +6,6 @@
 import numpy as np
 
 
-# from initialization import *
-# import noise_generation as noise
-
-
 def path_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U):
     #  X0 -- initial state, A -- state transition matrix, C -- observation matrix, \
     #  B -- control coefficient matrix, G -- control gain, K -- Kalman gain, \
@@ -38,12 +34,3 @@ def path_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U):
 
     return X, Z, U, X_hat
 
-# W = noise.system_noise_generator(d_X, N, R)
-# V = noise.observation_noise_generator(d_Z, N, S)
-# K = np.array([[1.0], [1.0]])
-# G = np.array([[1.0, 1.0]])
-# X, Z, U, X_hat = path_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U)
-# print('X:',X)
-# print('Z:',Z)
-# print('U:',U)
-# print('X_hat:',X_hat)

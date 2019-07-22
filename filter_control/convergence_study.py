@@ -32,6 +32,7 @@ def conv_study_K(X0, A, C, B, G, K, N, r, W, V, d_X, d_Z, d_U, delta_K, which):
         print("Invalid argument")
 
     n = 10  # number of finite difference approximations to compute
+    grad_K = grad_K.transpose()
     print("direct gradient computation", grad_K)  # This is the gradient computed by formulas
 
     # convergence study in K derivative

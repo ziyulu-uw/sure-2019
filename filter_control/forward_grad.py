@@ -85,7 +85,7 @@ def filter_forward(X, X_hat, Z, A, B, C, G, N, K, r, d_X):
         dXn_dK_1 = A @ dXn_dK + B @ G @ dXnHat_dK  # d Xn+1/dK
         # update the gradient of total cost function
         dF_dK += X[i + 1, :, :].T @ dXnHat_dK_1 + r * Un.T @ dUn_dK
-        print("dF_dK",dF_dK/N)
+        # print("dF_dK",dF_dK/N)
         #print(X[i+1,:,:].T@dXnHat_dK_1)
     
         # update dX^/dK, dX/dK

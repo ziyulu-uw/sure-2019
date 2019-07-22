@@ -19,6 +19,6 @@ def compute_loss(X, U, N, r):
         u = U[i, :, :]
         err1 = x.transpose() @ x
         err2 = u.transpose() @ u
-        F += err1[0][0] + err2[0][0]
+        F += err1[0][0] + r*err2[0][0]
 
     return F / (2 * N)
