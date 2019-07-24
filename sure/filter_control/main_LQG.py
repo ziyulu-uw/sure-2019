@@ -4,13 +4,14 @@
 # Description: This program is about do LQG control and Kalman Filter Estimation, to compare this gradient descent 
 
 import numpy as np
-from initialization import A,B,C,r,n,N,x0,v0,R,S,t    
+from initialization import *
                                  #params are set here: Constant matrices: A,B,C;
-                                 # Cov: R,S; N-num of time step; n-num of paths
+                                 # Cov: R,S; N-num of time step
 import LQG                       #simulation with LQG is done here
 from LQG_tool import Plot_K,Plot_G,Plot_X,Plot_Cost,display     #This program offers some functions that used in LQG and plot
+n = 1000  # number of paths
 
-DoLQG = False #If you only want to see Kalman Filter Estimation, set here to be False;
+DoLQG = True #If you only want to see Kalman Filter Estimation, set here to be False;
               # If you want to do LQG, set here to be True
               
 ## Find out Sn (a series of matrices that will be used in Gn calculation)
