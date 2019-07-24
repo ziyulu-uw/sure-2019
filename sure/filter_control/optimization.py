@@ -11,12 +11,13 @@ import loss_computation
 import backward_grad
 
 
-def SGD(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n, momentum, alpha, s):
+def SGD(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n, L, g, momentum, alpha, s):
     # X0 -- initial state, A -- state transition matrix, C -- observation matrix, \
     # B -- control coefficient matrix, G -- initial control gain, K -- initial Kalman gain, \
     # N -- number of total time steps, S -- observation noise covariance matrix, R -- system noise covariance matrix, \
     # d_X -- dimension of state, d_Z -- dimension of observation, d_U -- dimension of control, \
     # r -- scaling factor, n -- number of total gradient steps, \
+    # L -- list of milestones, g -- multiplicative factor of learning rate decay, \
     # momentum -- momentum factor (can set to 0), alpha -- learning rate, s -- random seed
     # optimizes K and G using SGD algorithm
     # returns optimized K and G, a list of F at each gradient step, a list of dF/dK, dF/dG at each gradient step
@@ -24,6 +25,7 @@ def SGD(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n, momentum, alpha, s):
     K_tensor = torch.tensor(K, requires_grad=True)
     G_tensor = torch.tensor(G, requires_grad=True)
     optimizer = torch.optim.SGD([K_tensor, G_tensor], lr=alpha, momentum=momentum)
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=L, gamma=g)
 
     np.random.seed(s)
     F_l = []
@@ -49,6 +51,7 @@ def SGD(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n, momentum, alpha, s):
         K_tensor.grad = grad_K_tensor
         G_tensor.grad = grad_G_tensor
         optimizer.step()
+        scheduler.step()
 
     K = K_tensor.detach().numpy()
     G = G_tensor.detach().numpy()
@@ -56,12 +59,13 @@ def SGD(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n, momentum, alpha, s):
     return K, G, F_l, grad_K_l, grad_G_l
 
 
-def Adam(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n, alpha, s):
+def Adam(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n, L, g, alpha, s):
     # X0 -- initial state, A -- state transition matrix, C -- observation matrix, \
     # B -- control coefficient matrix, G -- initial control gain, K -- initial Kalman gain, \
     # N -- number of total time steps, S -- observation noise covariance matrix, R -- system noise covariance matrix, \
     # d_X -- dimension of state, d_Z -- dimension of observation, d_U -- dimension of control, \
     # r -- scaling factor, n -- number of total gradient steps, \
+    # L -- list of milestones, g -- multiplicative factor of learning rate decay, \
     # alpha -- learning rate, s -- random seed
     # optimizes K and G using Adam algorithm
     # returns optimized K and G, a list of F at each gradient step, a list of dF/dK, dF/dG at each gradient step
@@ -69,6 +73,8 @@ def Adam(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n, alpha, s):
     K_tensor = torch.tensor(K, requires_grad = True)
     G_tensor = torch.tensor(G, requires_grad=True)
     optimizer = torch.optim.Adam([K_tensor, G_tensor], lr=alpha)
+    # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=L, gamma=0.1)
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=L, gamma=g)
 
     np.random.seed(s)
     F_l = []
@@ -94,6 +100,7 @@ def Adam(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n, alpha, s):
         K_tensor.grad = grad_K_tensor
         G_tensor.grad = grad_G_tensor
         optimizer.step()
+        scheduler.step()
 
     K = K_tensor.detach().numpy()
     G = G_tensor.detach().numpy()
@@ -101,12 +108,13 @@ def Adam(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n, alpha, s):
     return K, G, F_l, grad_K_l, grad_G_l
 
 
-def RMSprop(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n, alpha, s):
+def RMSprop(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n, L, g, alpha, s):
     # X0 -- initial state, A -- state transition matrix, C -- observation matrix, \
     # B -- control coefficient matrix, G -- initial control gain, K -- initial Kalman gain, \
     # N -- number of total time steps, S -- observation noise covariance matrix, R -- system noise covariance matrix, \
     # d_X -- dimension of state, d_Z -- dimension of observation, d_U -- dimension of control, \
     # r -- scaling factor, n -- number of total gradient steps, \
+    # L -- list of milestones, g -- multiplicative factor of learning rate decay, \
     # alpha -- learning rate, s -- random seed
     # optimizes K and G using RMSprop algorithm
     # returns optimized K and G, a list of F at each gradient step, a list of dF/dK, dF/dG at each gradient step
@@ -114,6 +122,7 @@ def RMSprop(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n, alpha, s):
     K_tensor = torch.tensor(K, requires_grad = True)
     G_tensor = torch.tensor(G, requires_grad=True)
     optimizer = torch.optim.Adam([K_tensor, G_tensor], lr=alpha)
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=L, gamma=g)
 
     np.random.seed(s)
     F_l = []
@@ -139,6 +148,7 @@ def RMSprop(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n, alpha, s):
         K_tensor.grad = grad_K_tensor
         G_tensor.grad = grad_G_tensor
         optimizer.step()
+        scheduler.step()
 
     K = K_tensor.detach().numpy()
     G = G_tensor.detach().numpy()

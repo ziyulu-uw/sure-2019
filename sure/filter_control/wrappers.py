@@ -10,12 +10,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def wrapper(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, s_l, which, alpha, momentum=0):
+def wrapper(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, L, g, s_l, which, alpha, momentum=0):
     # X0 -- initial state, A -- state transition matrix, C -- observation matrix, \
     # B -- control coefficient matrix, G0 -- initial control gain, K0 -- initial Kalman gain, \
     # N -- number of total time steps, S -- observation noise covariance matrix, R -- system noise covariance matrix, \
     # d_X -- dimension of state, d_Z -- dimension of observation, d_U -- dimension of control, \
-    # r -- scaling factor, n -- number of total gradient steps, s_l -- a list of random seeds, \
+    # r -- scaling factor, n -- number of total gradient steps, \
+    # # L -- list of milestones, g -- multiplicative factor of learning rate decay,  s_l -- a list of random seeds, \
     # which -- name of the optimization algorithm to use (SGD, Adam, or RMSprop), \
     # alpha -- learning rate, momentum -- optional momentum factor for SGD
     # a wrapper function that calls one of the optimization methods in optimization.py for s in s_l \
@@ -40,11 +41,11 @@ def wrapper(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, s_l, which, alpha
     print("seed      K1            K2         G1         G2       InitialLoss   FinalLoss   Max_K_Gradient  Max_G_Gradient")
     for s in s_l:
         if which == 'SGD':
-            K, G, F_l, grad_K_l, grad_G_l = optimization.SGD(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, momentum, alpha, s)
+            K, G, F_l, grad_K_l, grad_G_l = optimization.SGD(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, L, g, momentum, alpha, s)
         elif which == 'Adam':
-            K, G, F_l, grad_K_l, grad_G_l = optimization.Adam(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, alpha, s)
+            K, G, F_l, grad_K_l, grad_G_l = optimization.Adam(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, L, g, alpha, s)
         elif which == 'RMSprop':
-            K, G, F_l, grad_K_l, grad_G_l = optimization.RMSprop(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, alpha, s)
+            K, G, F_l, grad_K_l, grad_G_l = optimization.RMSprop(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, L, g, alpha, s)
         else:
             print('Invalid algorithm')
             break
