@@ -7,7 +7,9 @@ import numpy as np
 
 
 def compute_loss(X, U, N, r):
-    # X -- list of states from one path, U -- list of controls from one path, \
+    # X -- list of states from one path (X0, X1, ..., XN), 
+    # U -- list of controls from one path (U0,U1,...,UN=0), 
+    # Caution: U_N should be set as zero manually before call the function
     # N -- number of total time steps, r -- scaling factor
     # computes the mean-squared error: F = 1/2N \sum_{n=0}^{N} (X_n^TX_n + rU_n^TU_n), U_N=0
     # returns F
