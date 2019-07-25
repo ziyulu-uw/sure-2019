@@ -3,16 +3,13 @@
 # Date: July 2019
 # Description: This program performs gradient testing and gradient descent
 
-import my_code.filter_control.wrappers
-
-
 import numpy as np
-from filter_control.initialization import *
-from filter_control import noise_generation
-from filter_control import convergence_study
-from filter_control import wrappers
-from filter_control import stability_check
-from filter_control import performance_test
+from initialization import *
+import noise_generation
+import convergence_study
+import wrappers
+import stability_check
+import performance_test
 
 
 ###### gradient testing ######
