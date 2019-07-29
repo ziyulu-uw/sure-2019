@@ -10,24 +10,36 @@ from loss_computation import compute_loss  # calculate the cost here
 
 
 def compute_cost_rate(X_val, TrueX_val, G_val, N, r):
-    """Xn+1^2 + rUn^2
-    @parameters: average X: X is N*2*1 , average U: U is N*1*1
-    @return: cost rate"""
-    G            = np.reshape(G_val[-1, :], [1, 2])
+    """X_{n+1}^2 + rUn^2
+    @parameters: average X: X is (N+1)*2*1 , average U: U is (N+1)*1*1
+    @return: cost rate 1*(N+1) """
+    G            = np.reshape(G_val, [N+1, 1, 2])
+    # Calculate X in Loss Function (real value of X, not estimation)
     X            = np.reshape(np.average(TrueX_val, axis=0), [N + 1, 2, 1])
+    # Calculate U in Loss Function (U = G X_hat)
     X_hat        = np.reshape(np.average(X_val, axis=0), [N + 1, 2, 1])
     U            = G @ X_hat
-    U[-1, :, :]  = 0  # we do not take account of U_N into the loss
-    d_X          = len(X[0,:,:])
-    Y            = np.zeros([len(X),d_X,1])  # Y is used to take values from X1 to X_N-1, X_N = 0
-    Y[:-1, :, :] = X[1:, :, :]
-    Jn           = np.real((transpose(Y)@Y+r*transpose(U)@U)/(2*len(Y)))
+    d_U          = len(U[0, :, :])
+    Y            = np.zeros([len(U), d_U, 1])  # Y is used to take values from U0 to U_N-1, U_N = 0
+    Y[1:, :, :] = U[:-1, :, :]
+
+    # debugging...
+    # print("Y:", np.sum(Y))
+    # U_ = U.copy()
+    # U_[-1,:,:] = 0
+    # print("U_:", np.sum(U_))
+
+    # Calculate X_{n+1}^2 + rUn^2
+    # print(np.sum(transpose(X) @ X + r * transpose(Y) @ Y) / (2 * N))
+    Jn           = np.real((transpose(X)@X+r*transpose(Y)@Y)/(2*N))
     cost_rate    = np.reshape(Jn, [1, N + 1])[0][:-1]
     return cost_rate
 
 
 def compute_cost(X_val, TrueX_val, G_val, N, r):
     """call compute_loss in this function of calculate the total cost of LQG simulation
+    Remark: The result by calling compute_cost should be equal to np.sum(cost_rate), the value returned
+    by compute_cost_rate
      @parameters: X_val: X estimation value, n*N*2;
                  TrueX_val: real value of X of n paths at N time steps, n*N*2
                  G_val: the value of control G at N time step, N*2"""
@@ -49,24 +61,44 @@ def Plot_Cost(X_val_list, TrueX_val_list, G_val_list, t, N, r, num_of_plot, str_
                  r: constant coefficient in loss function
                  X0: initial value of X, 2*1
                  """
+    cost_list = []
     plt.figure(1)
     for i in range(num_of_plot):
         X_val     = X_val_list[i]
         TrueX_val = TrueX_val_list[i]
         G_val     = G_val_list[i]
         cost_rate = compute_cost_rate(X_val, TrueX_val, G_val, N, r)
+
+        # debugging... sum(cost_rate) should be equal to the result from compute_loss
+        # print(str_list[i]+": sum of cost rate:", np.sum(cost_rate))
+        cost_list.append(cost_rate)
+
         # Plot Cost
-        plt.plot(t, cost_rate, label = str_list[i])
+        plt.plot(t, cost_rate, label=str_list[i])
     plt.xlabel("time")
     plt.ylabel("cost rate")
     plt.title("cost rate w.r.t Time")
     plt.legend()
     plt.show()
-    return cost_rate
+
+    plt.figure(2)
+    for i in range(num_of_plot):
+        X_val     = TrueX_val_list[i]
+        X_avg = np.average(X_val, axis=0)
+        plt.plot(t, X_avg[:-1, 0], label=str_list[i]+": $X_1$")
+        plt.plot(t, X_avg[:-1, 1], label=str_list[i]+": $X_2$")
+    plt.xlabel("time")
+    plt.ylabel("X")
+    plt.title("X w.r.t Time")
+    plt.legend()
+    plt.show()
+
+    return cost_list
 
 
 def after_train_cost(K, G, W, V, A, B, C, x0, v0, n, N):
-    """after we have found out K, G in steady state, we want to know the value of loss use this pair of K and G
+    """after we have found out K, G in steady state, we want to know the value of loss
+    using this pair of K and G
     @:parameter K 2*1 Kalman filter
                 G 1*2 optimal control
                 W, V noise"""

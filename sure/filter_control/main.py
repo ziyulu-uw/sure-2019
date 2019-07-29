@@ -24,7 +24,7 @@ import performance_test
 K = np.array([[0.5], [0.5]])  # initial Kalman gain
 G = np.array([[-1.0, -0.1]])  # initial control gain
 result = wrappers.wrapper(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n=600, \
-                          L=[100, 200, 400], g=0.1, s_l=[1, 5, 10, 20, 27], which='Adam', alpha=0.1, momentum=0)
+                          L=[100, 200, 400], g=0.1, s_l=[1, 5, 10, 3, 20, 4, 27], which='Adam', alpha=0.1, momentum=0)
 if result is None:
     print("Can't do optimization since the dynamics is unstable.")
 else:

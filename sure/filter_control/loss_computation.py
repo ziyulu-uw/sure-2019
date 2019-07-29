@@ -4,7 +4,7 @@
 # Description: This program computes the loss F
 
 import numpy as np
-
+from LQG_tool import transpose
 
 def compute_loss(X, U, N, r):
     # X -- list of states from one path (X0, X1, ..., XN), 
@@ -16,11 +16,13 @@ def compute_loss(X, U, N, r):
 
     F = 0
     assert (N == len(X) - 1), "Number of intended time steps and number of states not equal. Something is wrong."
+    J_list = []
     for i in range(N + 1):
         x = X[i, :, :]
         u = U[i, :, :]
         err1 = x.transpose() @ x
         err2 = u.transpose() @ u
         F += err1[0][0] + r*err2[0][0]
+        J_list.append(err1[0][0] + r*err2[0][0])
 
     return F / (2 * N)
