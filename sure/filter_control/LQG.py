@@ -18,21 +18,25 @@ def Sn_backward(A,B,r,n,N):
         Sn = A.T@(Sn-Sn@B@inv(B.T@Sn@B+r)@B.T@Sn)@A+I  #Sn
     return Sn_list
 
-def LQG_simulation(x0,v0,A,B,C,R,S,r,Sn_list,n,N,DoLQG):
-    '''the function to do LQG control in simulation
+
+def LQG_simulation(x0,v0,A,B,C,R,S,r,Sn_list,W,V,n,N,DoLQG):
+    """the function to do LQG control in simulation
     @parameter: x0, v0 are initial conditions
                 A fundamental solution
                 B constant matrix exerted on control
                 C constant matrix exerted on measurement
                 R covariance matrix of process noise
                 S covariance matrix of observation noise
-                Sn_list a series of matrices that will be used in calculationg control
+                Sn_list a series of matrices that will be used in calculating control
                         the calculation of Sn's are in function Sn_backward
+                r coefficient in loss function
+                W process noise with covariance matrix R mean 0
+                V observation noise with covariance matrix S mean 0
                 n num of paths
                 N length of each path
     @return:    X_val n*(N+1)*2 all the x,v
                 K_val n*(N+1)*2 all the Kalman Gain
-                G_val (N+1)*2 all the Control Gain'''
+                G_val (N+1)*2 all the Control Gain"""
     
     ## allocate space for arrays
     Zn_hat    = np.zeros([n,2,1])    # predicted observation using old data Z(n+1) = C(A+BG) X_hat(n)
@@ -74,7 +78,7 @@ def LQG_simulation(x0,v0,A,B,C,R,S,r,Sn_list,n,N,DoLQG):
     
     ## generate n paths of noises, each of length N
     # W = generate_noise(R,n,N+1) #process noise: R-cov  [Wn is not used in the simulation]
-    V = generate_noise(S,n,N+1) #observation nois: S-cov
+    # V = generate_noise(S,n,N+1) #observation nois: S-cov
     
     r = np.ones([1,1])*r     #need to reshape r to 3d matrix form
     ## time update
