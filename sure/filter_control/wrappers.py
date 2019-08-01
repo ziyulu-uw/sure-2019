@@ -16,9 +16,9 @@ def wrapper(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, L, g, s_l, which,
     # N -- number of total time steps, S -- observation noise covariance matrix, R -- system noise covariance matrix, \
     # d_X -- dimension of state, d_Z -- dimension of observation, d_U -- dimension of control, \
     # r -- scaling factor, n -- number of total gradient steps, \
-    # # L -- list of milestones, g -- multiplicative factor of learning rate decay,  s_l -- a list of random seeds, \
+    # L -- list of milestones, g -- multiplicative factor of learning rate decay,  s_l -- a list of random seeds, \
     # which -- name of the optimization algorithm to use (SGD, Adam, or RMSprop), \
-    # alpha -- learning rate, momentum -- optional momentum factor for SGD
+    # alpha -- learning rate, M -- minibatch size, momentum -- optional momentum factor for SGD
     # a wrapper function that calls one of the optimization methods in optimization.py for s in s_l \
     # and plots F vs n
 
@@ -40,15 +40,10 @@ def wrapper(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, L, g, s_l, which,
     print("---- After {} iterations ----".format(n))
     print("seed      K1            K2         G1         G2       InitialLoss   FinalLoss   Max_K_Gradient  Max_G_Gradient")
     for s in s_l:
-        if which == 'SGD':
-            K, G, F_l, grad_K_l, grad_G_l = optimization.SGD(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, L, g, momentum, alpha, s)
-        elif which == 'Adam':
-            K, G, F_l, grad_K_l, grad_G_l = optimization.Adam(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, L, g, alpha, s)
-        elif which == 'RMSprop':
-            K, G, F_l, grad_K_l, grad_G_l = optimization.RMSprop(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, L, g, alpha, s)
-        else:
-            print('Invalid algorithm')
-            break
+        try:
+            K, G, F_l, grad_K_l, grad_G_l = optimization.optimize(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, L, g, momentum, alpha, s, which)
+        except TypeError:
+            return
 
         print("{:2d}    {:10.2e}  {:10.2e}  {:10.2e}  {:10.2e}  {:10.2e}   {:10.2e}     {:10.2e}     {:10.2e}"\
               .format(s, K[0][0], K[1][0], G[0][0], G[0][1], F_l[0], F_l[-1], np.amax(grad_K_l), np.amax(grad_G_l)))
@@ -67,7 +62,7 @@ def wrapper(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, L, g, s_l, which,
 
     x = [i for i in range(n)]
     plt.plot(x, F_avg)
-    plt.yscale("log")
+    # plt.yscale("log")
     plt.rcParams["axes.titlesize"] = 8
     plt.title("{} algorithm with {} steps and step size {}, averaged over {} random seeds".\
               format(which, str(n),str(alpha),str(len(s_l))))

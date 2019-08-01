@@ -15,14 +15,14 @@ import performance_test
 def dt_test():
     """This function is used to compare the cost, filter, optimal control given by different dt"""
     ## Find out the relation w.r.t dt
-    k         = 0.5  # spring constant
+    k         = 1  # spring constant
     gamma     = 0.1  # friction coefficient
     sigma     = 0.1  # noise coefficient in SDE
     x0        = 1    # initial condition
     v0        = 0
     r         = 1    # scaling factor in the cost
     obv_noise = 0.3  #  covariance of observation noise
-    dt_list   = [0.5, 1.0, 2.0, 2.5, 3.125, 4.0] # Please choose what can divide t1
+    dt_list   = [1.5, 2.0, 3.0, 4.0, 5.0, 6.0] # Please choose what can divide t1
     n         = 1000  # number of paths
 
     ## allocate space
@@ -66,8 +66,7 @@ def dt_test():
         cost2 = compute_cost(X_val_, TrueX_val_, G_val_, N, r)
 
         ###-------------------------------- Find Filter and Control using SGD-------------------------------------------
-        K_SGD, G_SGD, F_SGD = wrapper(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n=600, \
-                         L=[100, 200, 400], g=0.1, s_l=[1, 5, 10, 3, 20, 4, 27], which='Adam', alpha=0.1, momentum=0)
+        K_SGD, G_SGD, F_SGD = wrapper(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n=600, act=True, L=[100, 200, 400], g=0.1, s_l=[1, 4, 10, 20, 27], alpha=0.1, momentum=0, M=1, which='Adam')
         # K_SGD 2*1, G_SGD 1*2, F_SGD float
 
         ## find the testing result of SGD

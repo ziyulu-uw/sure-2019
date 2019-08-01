@@ -6,6 +6,7 @@
 import noise_generation
 import path_generation
 import loss_computation
+import numpy as np
 
 
 def test(X0, A, C, B, G, K, N, R, S, r, d_X, d_Z, d_U, n):
@@ -18,15 +19,12 @@ def test(X0, A, C, B, G, K, N, R, S, r, d_X, d_Z, d_U, n):
     #  tests the performance of K and G on 10 random filtering and control problems
     #  returns the average error
 
-    avg_F = 0
-    for i in range(n):
-        W = noise_generation.system_noise_generator(d_X, N, R)
-        V = noise_generation.observation_noise_generator(d_Z, N, S)
-        X, Z, U, X_hat = path_generation.path_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U)
-        F = loss_computation.compute_loss(X, U, N, r)
-        avg_F += F
+    W = noise_generation.vectorized_system_noise_generator(n, d_X, N, R)
+    V = noise_generation.vectorized_observation_noise_generator(n, d_Z, N, S)
+    X, Z, U, X_hat = path_generation.multi_paths_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U)
+    F = loss_computation.compute_multi_loss(X, U, N, r)
+    avg_F = np.mean(F, axis=0)
 
-    avg_F = avg_F/n
-    print("Testing result:{:10.2e}".format(avg_F))
+    print("Testing result:{:10.2e}".format(avg_F[0][0]))
 
     return avg_F

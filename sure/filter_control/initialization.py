@@ -11,13 +11,13 @@ from numpy import linalg as LA
 
 # constants
 m = 1   # mass of the object
-k = 0.5  # spring constant
+k = 1  # spring constant
 gamma = 0.1  # friction coefficient
 omega = k/m
 mu = gamma/m
 w = math.sqrt(omega - 0.25*mu**2)
-N = 100  # number of time steps in one simulation
-dt = 0.1 # step size in one simulation
+N = 13  # number of time steps in one simulation
+dt = 5  # step size in one simulation
 t = np.linspace(0,N*dt,N)
 sigma = 0.1  # noise coefficient in SDE
 x0 = 1.0

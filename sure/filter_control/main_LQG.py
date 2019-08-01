@@ -28,14 +28,14 @@ W = generate_noise(R, n, N+1)  # process noise: R-cov  [Wn is not used in the si
 V = generate_noise(S, n, N+1)  # observation noise: S-cov
 
 # Plot K,G,and X
-#Plot_K(K_val, t)
-#Plot_X(X_val, t)
+# Plot_K(K_val, t)
+# Plot_X(X_val, t)
 if DoLQG:
     # Simulate the process with LQG control
     K_val, G_val, X_val, TrueX_val = LQG.LQG_simulation(x0, v0, A, B, C, R, S, r, Sn_list, W, V, n, N, DoLQG)
 display(G_val, K_val)  # display the G and K in the steady state
 
-#Plot_G(G_val, t)
+# Plot_G(G_val, t)
 cost1 = compute_cost(X_val, TrueX_val, G_val, N, r)
 print("Cost with transition Kn and Gn:   ", '{:.10e}'.format(cost1))
 
