@@ -90,10 +90,10 @@ def compute_multi_gradients(A, C, B, G, K, N, X, Z, U, X_hat, r, d_X):
 # G = np.array([[-1.0, -0.1]])
 # W = noise_generation.vectorized_system_noise_generator(m, d_X, N, R)
 # V = noise_generation.vectorized_observation_noise_generator(m, d_Z, N, S)
-# X1, Z1, U1, X_hat1 = path_generation.path_generator(X0, A, C, B, G, K, N, W[1], V[1], d_X, d_Z, d_U)
+# X1, Z1, U1, X_hat1 = path_generation.path_generator(X0, A, C, B, G, K, N, W[2], V[2], d_X, d_Z, d_U)
 # Q1, H1 = compute_gradient(A, C, B, G, K, N, X1, Z1, U1, X_hat1, r, d_X)
 # print(Q1, H1)
 # X, Z, U, X_hat = path_generation.multi_paths_generator(X0, A, C, B, G, K, N, W, V, d_X, d_Z, d_U)
 # Q, H = compute_multi_gradients(A, C, B, G, K, N, X, Z, U, X_hat, r, d_X)
-# print(Q[1], H[1])
+# print(Q[2], H[2])
 

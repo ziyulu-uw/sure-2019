@@ -6,7 +6,7 @@
 
 import numpy as np
 
-def init(k, gamma, dt, sigma, x0, v0, r, obv_noise):
+def init(k, gamma, dt, sigma, x0, v0, r, obv_noise, t1):
     """:parameter k - spring constant
        :parameter gamma - friction coefficient
        :parameter dt - time discretization
@@ -22,7 +22,7 @@ def init(k, gamma, dt, sigma, x0, v0, r, obv_noise):
     omega = k/m
     mu = gamma/m
     w = np.sqrt(omega - 0.25*mu**2)
-    t1 = 60
+    # t1 = 30
     N = int(t1/dt+1)  # number of time steps in one simulation
 
     #dt = 0.1  # step size in one simulation

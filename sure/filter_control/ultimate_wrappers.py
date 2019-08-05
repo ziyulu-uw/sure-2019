@@ -116,8 +116,10 @@ def wrapper(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, act, L, g, s_l, a
         plt.plot(x, best_cost, label='theoretical minimal cost')
         plt.yscale("log")
         plt.rcParams["axes.titlesize"] = 8
-        plt.title("{} algorithm with {} steps and step size {}, averaged over {} random seeds". \
-                  format(which, str(n), str(alpha), str(len(s_l))))
+        # plt.title("{} algorithm with {} steps and step size {}, averaged over {} random seeds". \
+        #           format(which, str(n), str(alpha), str(len(s_l))))
+        plt.title("{} algorithm with {} steps, step size {}, minibatch size {}". \
+                  format(which, str(n), str(alpha), str(M)))
         plt.xlabel("number of optimization steps")
         plt.ylabel("mean squared error of one simulation")
         plt.legend()
@@ -128,8 +130,10 @@ def wrapper(X0, A, C, B, G0, K0, N, S, R, d_X, d_Z, d_U, r, n, act, L, g, s_l, a
         plt.plot(x, diff_G_avg, label='G')
         # plt.yscale("log")
         plt.rcParams["axes.titlesize"] = 8
-        plt.title("{} algorithm with {} steps and step size {}, averaged over {} random seeds". \
-                  format(which, str(n), str(alpha), str(len(s_l))))
+        # plt.title("{} algorithm with {} steps and step size {}, averaged over {} random seeds". \
+        #           format(which, str(n), str(alpha), str(len(s_l))))
+        plt.title("{} algorithm with {} steps, step size {}, minibatch size {}". \
+                  format(which, str(n), str(alpha), str(M)))
         plt.xlabel("number of optimization steps")
         plt.ylabel("norm of difference between current K, G and theoretical optimal K, G", fontsize=8)
         plt.legend()

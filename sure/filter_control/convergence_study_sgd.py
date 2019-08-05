@@ -21,9 +21,10 @@ def LQG_sol():
     v0 = 0
     r = 1  # scaling factor in the cost
     obv_noise = 0.3  # covariance of observation noise
-    dt = 5  # Please choose what can divide t1 (in init_func.py)
+    t1 = 60
+    dt = 1.5  # Please choose what can divide t1
     n = 1000  # number of paths
-    x0, v0, t, X0, A, B, C, S, R, d_X, d_U, d_Z, r, N = init(k, gamma, dt, sigma, x0, v0, r, obv_noise)
+    x0, v0, t, X0, A, B, C, S, R, d_X, d_U, d_Z, r, N = init(k, gamma, dt, sigma, x0, v0, r, obv_noise, t1)
 
     # -------------------------------- Find Filter and Control using LQG-------------------------------------------
     # Find out Sn (a series of matrices that will be used in Gn calculation)
@@ -69,15 +70,16 @@ def SGD_sol(cost2, bestK, bestG):
     v0 = 0
     r = 1  # scaling factor in the cost
     obv_noise = 0.3  # covariance of observation noise
-    dt = 5  # Please choose what can divide t1 (in init_func.py)
-    x0, v0, t, X0, A, B, C, S, R, d_X, d_U, d_Z, r, N = init(k, gamma, dt, sigma, x0, v0, r, obv_noise)
+    t1 = 30
+    dt = 1.5  # Please choose what can divide t1
+    x0, v0, t, X0, A, B, C, S, R, d_X, d_U, d_Z, r, N = init(k, gamma, dt, sigma, x0, v0, r, obv_noise, t1)
 
     K = np.array([[0.5], [0.5]])  # initial Kalman gain
     G = np.array([[-1.0, -0.1]])  # initial control gain
     comp = [bestK, bestG, cost2]
     print("---- Numerical results ----")
-    K_avg, G_avg, F_avg, diff_K_avg, diff_K_avg = ultimate_wrappers.wrapper(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n=1000, act=True, L=[200, 400, 600], g=0.1,
-                                                                            s_l=[1, 4, 10, 20, 27], alpha=0.1, momentum=0, M=64, comp=comp, which='RMSprop')
+    K_avg, G_avg, F_avg, diff_K_avg, diff_K_avg = ultimate_wrappers.wrapper(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n=4000, act=True, L=[2000, 3000], g=0.1,
+                                                                            s_l=[1], alpha=0.1, momentum=0, M=8, comp=comp, which='RMSprop')
     test_loss = performance_test.test(X0, A, C, B, G_avg, K_avg, N, R, S, r, d_X, d_Z, d_U, n=1000)
 
     return K_avg, G_avg, test_loss
