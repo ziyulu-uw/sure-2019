@@ -12,6 +12,4 @@ def Ra(t):
     peak = 15
     lasting_time = 1  #unit: min
 
-    if t<= lasting_time:
-        return peak
-    return 0
+    return (t<= lasting_time) * peak
