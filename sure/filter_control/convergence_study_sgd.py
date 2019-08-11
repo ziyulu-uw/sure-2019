@@ -78,9 +78,9 @@ def SGD_sol(cost2, bestK, bestG):
     G = np.array([[-1.0, -0.1]])  # initial control gain
     comp = [bestK, bestG, cost2]
     print("---- Numerical results ----")
-    K_avg, G_avg, F_avg, diff_K_avg, diff_K_avg = ultimate_wrappers.wrapper(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n=4000, act=True, L=[2000, 3000], g=0.1,
-                                                                            s_l=[1], alpha=0.1, momentum=0, M=8, comp=comp, which='RMSprop')
-    test_loss = performance_test.test(X0, A, C, B, G_avg, K_avg, N, R, S, r, d_X, d_Z, d_U, n=1000)
+    K_avg, G_avg, F_avg, diff_K_avg, diff_K_avg = ultimate_wrappers.wrapper(X0, A, C, B, G, K, N, S, R, d_X, d_Z, d_U, r, n=200, act=False, L=[2000, 3000], g=0.1,
+                                                                            s_l=[1], alpha=0.1, betas=0.25, momentum=0, M=8, avg=None, comp=comp, which='RMSprop', zoom=None)
+    test_loss = performance_test.test(X0, A, C, B, G_avg, K_avg, N, R, S, r, d_X, d_Z, d_U, n=1000, disp=True)
 
     return K_avg, G_avg, test_loss
 

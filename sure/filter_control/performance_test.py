@@ -9,13 +9,13 @@ import loss_computation
 import numpy as np
 
 
-def test(X0, A, C, B, G, K, N, R, S, r, d_X, d_Z, d_U, n):
+def test(X0, A, C, B, G, K, N, R, S, r, d_X, d_Z, d_U, n, disp):
     #  X0 -- initial state, A -- state transition matrix, C -- observation matrix, \
     #  B -- control coefficient matrix, G -- optimal control gain, K -- optimal Kalman gain, \
     #  N -- number of total time steps,R -- covariance matrix of system noise, \
     #  S -- covariance matrix of observation noise, r -- scaling factor, \
     #  d_X -- dimension of state, d_Z -- dimension of observation, d_U -- dimension of control, \
-    #  n -- number of paths to test
+    #  n -- number of paths to test, disp -- whether or not to print
     #  tests the performance of K and G on 10 random filtering and control problems
     #  returns the average error
 
@@ -25,6 +25,7 @@ def test(X0, A, C, B, G, K, N, R, S, r, d_X, d_Z, d_U, n):
     F = loss_computation.compute_multi_loss(X, U, N, r)
     avg_F = np.mean(F, axis=0)
 
-    print("Testing result:{:10.2e}".format(avg_F[0][0]))
+    if disp:
+        print("Testing result:{:10.2e}".format(avg_F[0][0]))
 
     return avg_F
