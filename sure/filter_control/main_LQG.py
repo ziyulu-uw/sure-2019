@@ -9,7 +9,7 @@ from initialization import *
 # params are set here: Constant matrices: A,B,C; Cov: R,S; N-num of time step
 import LQG
 # simulation with LQG is done here
-from LQG_tool import Plot_K, Plot_G, Plot_X, display, generate_noise
+from LQG_tool import Plot_K, Plot_G, Plot_X, display, generate_noise, Plot_SampleX
 # This program offers some functions that used in LQG and plot
 from LQG_loss_computation import compute_cost, Plot_Cost,after_train_cost
 # cost plot and computation are done here
@@ -27,15 +27,18 @@ Sn_list = LQG.Sn_backward(A, B, r, n, N)
 W = generate_noise(R, n, N+1)  # process noise: R-cov  [Wn is not used in the simulation]
 V = generate_noise(S, n, N+1)  # observation noise: S-cov
 
-# Plot K,G,and X
-# Plot_K(K_val, t)
-# Plot_X(X_val, t)
 if DoLQG:
     # Simulate the process with LQG control
     K_val, G_val, X_val, TrueX_val = LQG.LQG_simulation(x0, v0, A, B, C, R, S, r, Sn_list, W, V, n, N, DoLQG)
 display(G_val, K_val)  # display the G and K in the steady state
 
-# Plot_G(G_val, t)
+# Plot K,G,and X
+Plot_K(K_val, t)
+Plot_X(X_val, t)
+Plot_G(G_val, t)
+
+""" X_val: n*(N+1)*2 all the x,v estimation
+TrueX_val: n*(N+1)*2 all the x,v true values"""
 cost1 = compute_cost(X_val, TrueX_val, G_val, N, r)
 print("Cost with transition Kn and Gn:   ", '{:.10e}'.format(cost1))
 
@@ -67,3 +70,5 @@ G_val_list  = [G_val, G_val_]
 num_of_plot = 2
 str_list    = ["transitional Kn, Gn", "steady state K, G"]
 cost_list = Plot_Cost(X_list1, X_list2,  G_val_list, t, N, r, num_of_plot, str_list)
+
+Plot_SampleX(t, TrueX_val_, X_val, V)
