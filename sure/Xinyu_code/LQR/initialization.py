@@ -61,7 +61,7 @@ B          = np.zeros([2,1])
 B[1][0]    = 1
 
 ## parameter in cost function
-r          = 500  
+r          = 0.5
 
 ## initial condition
 x0         = 1
