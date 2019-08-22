@@ -8,8 +8,11 @@ import numpy as np
 ## Meal Input
 # meal time
 tk_list  = [60, 350, 720]      #unit: min
+# the time that the subject take the meal
+meal_time=5
 # meal intake value
-qk_list  = [3000, 4500, 3500]  #unit: mg/min, from ref 1 in Xinyu's writeup
+qk_list  = np.array([3000, 4500, 3500])/meal_time  #unit: mg/min, from ref 1 in Xinyu's writeup
+
 # digestion coefficient
 tau      = 100                 #unit: 1  [unknown parameter!!!]
 # initial glucose rate of appearance
@@ -17,7 +20,7 @@ Ra_0     = 5                   #unit: mg/kg/min
 
 ## Insulin Parameter
 c1       = 0.25                #unit: min^-1   [unknown parameter!!!]
-c2       = 0.2                #unit: min^-1   [unknown parameter!!!]
+c2       = 0.2                 #unit: min^-1   [unknown parameter!!!]
 I0       = 0.38                #unit: mU/l     [unknown initial condition]
 Ib       = 0
 
@@ -43,4 +46,3 @@ h        = t_list[1]-t_list[0]
 dt       = 5                    #unit: min
 N_meas   = int(end_time/dt+1)   #num of measurements
 meas_time= np.linspace(0, end_time, N_meas)
-
