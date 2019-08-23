@@ -9,12 +9,12 @@ import numpy as np
 # meal time
 tk_list  = [60, 350, 720]      #unit: min
 # the time that the subject take the meal
-meal_time=5
+meal_time=25
 # meal intake value
 qk_list  = np.array([3000, 4500, 3500])/meal_time  #unit: mg/min, from ref 1 in Xinyu's writeup
 
 # digestion coefficient
-tau      = 100                 #unit: 1  [unknown parameter!!!]
+tau      = 80                 #unit: 1  [unknown parameter!!!]
 # initial glucose rate of appearance
 Ra_0     = 5                   #unit: mg/kg/min
 
@@ -34,6 +34,10 @@ X0       = 0
 """A fasting blood sugar level less than 100 mg/dL (5.6 mmol/L) is normal.
  A fasting blood sugar level from 100 to 125 mg/dL (5.6 to 6.9 mmol/L) is considered prediabetes.
   If it's 126 mg/dL (7 mmol/L) or higher on two separate tests, you have diabete"""
+
+## Wrap the parameters into a list:
+param_list    = [p1, p2, p3, tau, c1, c2]
+init_cond     = [G0, X0, I0, Ra_0]
 
 ## Cost function parameter
 lam      = 0.5

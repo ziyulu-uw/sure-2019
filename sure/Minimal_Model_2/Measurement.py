@@ -38,9 +38,11 @@ def measurement_generation(vn_list, t_list,  dt,h, meas_time):
     meal_time = 5
     # meal intake value
     qk_list = np.array([3000, 4500, 3500]) / meal_time  # unit: mg/min, from ref 1 in Xinyu's writeup
+    ## Wrap the parameters into a list:
+    param_list = [p1, p2, p3, tau, c1, c2]
+    init_cond = [G0, X0, I0, Ra_0]
 
-    G, X, I, Ra = path_generator(vn_list, p1, p2, p3, Gb, Ib, I0, c1, c2, meas_time, t_list, tau, G0,X0, Ra_0, dt, h, tk_list, qk_list, meal_time)
-
+    G, X, I, Ra = path_generator(init_cond, param_list,vn_list,Gb, Ib, meas_time, t_list, tk_list, qk_list, meal_time, dt, h)
     model_meas = G[::int(dt/(t_list[1]-t_list[0]))]
     true_meas= model_meas+ np.random.normal(0, var, [len(model_meas)])
     return true_meas

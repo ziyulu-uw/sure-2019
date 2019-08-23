@@ -21,5 +21,6 @@ def cost_computation(G, vn_list):
             G_hat[i] = 0
 
     J = np.sum(G_hat**2) + np.sum(vn_list**2)*50
+    """lambda is 50 decided in the paper"""
 
     return J

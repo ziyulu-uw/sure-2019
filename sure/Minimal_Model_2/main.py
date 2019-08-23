@@ -3,29 +3,25 @@
 # Date: August 2019
 # Description: The main function to run the model
 
-from Initialization import tk_list, qk_list, tau, t_list, c1, c2, dt, I0, meas_time, p1, p2, p3, Gb, Ib, G0,X0, Ra_0, h, lam, end_time, meal_time
+from Initialization import tk_list, qk_list,t_list, dt, meas_time,init_cond,  Gb, Ib, h, lam, end_time, meal_time, param_list
 import numpy as np
 import Measurement
 import matplotlib.pyplot as plt
 from Cost import cost_computation
 from Simulation import path_generator
 
+
+## a no control simulation
+v0_list = np.zeros([1, len(t_list)])[0]   # a control list which is zero
+G_no_c, X_no_c, I_no_c, Ra_no_c = path_generator(init_cond, param_list, v0_list, Gb, Ib, meas_time, t_list, tk_list, qk_list, meal_time, dt, h)
 ## Some simple control on insulin injection; later will be replaced by control from SGD
 vn_list = np.zeros([1, len(t_list)])[0]
-
-# a no control simulation
-G_no_c, X_no_c, I_no_c, Ra_no_c = path_generator(vn_list, p1, p2, p3, Gb, Ib, I0, c1, c2, meas_time, t_list, tau, G0,X0, Ra_0, dt, h, tk_list, qk_list, meal_time)
-
 vn_list[100:280] = 240
 vn_list[600:1000] = 300
 vn_list[1400:1700] = 120
 
-
-G, X, I, Ra = path_generator(vn_list, p1, p2, p3, Gb, Ib, I0, c1, c2, meas_time, t_list, tau, G0,X0, Ra_0, dt, h, tk_list, qk_list, meal_time)
-
-# find out the cost
-print("cost with control:", cost_computation(G, Gb, lam, vn_list, end_time))
-
+#simulation with control
+G, X, I, Ra = path_generator(init_cond, param_list,vn_list, Gb, Ib, meas_time, t_list, tk_list, qk_list, meal_time, dt, h)
 # compare with control and no control senario
 plt.plot(t_list , G, label="with control")
 plt.plot(t_list, G_no_c, '--',label="no control")
