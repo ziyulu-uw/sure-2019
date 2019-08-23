@@ -5,13 +5,14 @@
 
 from Cost import cost_computation
 from Simulation import path_generator
+import numpy as np
 
 
 def FDA(init_cond, param_list,vn_list, Gb, Ib, meas_time, t_list, tk_list, qk_list, meal_time, dt, h):
     """take a list of parameters a, and return a list of dJ/da
     dJ/da = [J(a+s)-J(a-s)] / 2s """
 
-    partial_derivative = []
+    partial_derivative = np.zeros(len(param_list))
     for i in range(len(param_list)):
         s = 0.000001
         a = param_list[i]*(1+s)             #shift a parameter s of its original value
@@ -29,6 +30,5 @@ def FDA(init_cond, param_list,vn_list, Gb, Ib, meas_time, t_list, tk_list, qk_li
         cost_f = cost_computation(G_f, vn_list)  #J(a+s)
         cost_b = cost_computation(G_b, vn_list)  #J(a-s)
         dJ_da = (cost_f-cost_b)/(s*2)            # [J(a+s)-J(a-s)]/ 2s
-        partial_derivative.append(dJ_da)
+        partial_derivative[i] = dJ_da
     return partial_derivative
-

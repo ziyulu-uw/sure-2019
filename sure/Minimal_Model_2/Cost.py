@@ -20,7 +20,7 @@ def cost_computation(G, vn_list):
         else:  # within the euglycemic zone
             G_hat[i] = 0
 
-    J = np.sum(G_hat**2) + np.sum(vn_list**2)*50
+    J = 1/len(G)*(np.sum(G_hat**2) + np.sum(vn_list**2)*50)
     """lambda is 50 decided in the paper"""
 
     return J
