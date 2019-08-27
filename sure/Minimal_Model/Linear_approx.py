@@ -3,6 +3,7 @@
 # Date: August 2019
 # Description: Some tools to determine function value based on linear approximation has been included here
 import numpy as np
+"""not useful any more"""
 
 def Linear_interpolation(t, I_list, t_list):
     """ Find out I at time t using a linear interpolation between two points in t_list

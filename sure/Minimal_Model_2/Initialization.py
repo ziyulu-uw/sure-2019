@@ -12,6 +12,8 @@ tk_list = [60, 350, 720]  # unit: min
 meal_time = 25
 # meal intake value
 qk_list = np.array([3000, 4500, 3500]) / meal_time  # unit: mg/min, from ref 1 in Xinyu's writeup
+# wrap all the meal related variables into one variable
+meal_params = (tk_list,qk_list,meal_time)
 
 # digestion coefficient
 tau = 80  # unit: 1  [unknown parameter!!!]
@@ -37,16 +39,21 @@ X0 = 0
 
 # Wrap the parameters into a list:
 param_list = [p1, p2, p3, tau, c1, c2]
-init_cond = [G0, X0, I0, Ra_0]
+init_cond  = [G0, X0, I0, Ra_0]
 
 # Cost function parameter
 lam = 0.5
 
 # Code Parameter
-end_time = 1000  # unit: min
-N = int(end_time * 2 + 1)  # num of time step
-t_list = np.linspace(0, end_time, N)
-h = t_list[1] - t_list[0]
-dt = 5  # unit: min
-N_meas = int(end_time / dt + 1)  # num of measurements
-meas_time = np.linspace(0, end_time, N_meas)
+end_time  = 400            # unit: min
+T         = 100             # unit: min;    Time for one control period (Better to choose a number that divides end_time)
+N         = end_time//T     # we will call the controller N times in a complete simulation NT = end_time
+
+# time discretization for measurements in one control period
+dt        = 5                             # unit: min;    Time interval between two measurements
+N_meas    = int(T / dt)                   # num of measurements in ine control period
+T_list    = np.linspace(0, T, N_meas+1)   # time discretization in one control period
+meas_time = np.linspace(0, T-dt, N_meas)  # time when measurements happen in one control period
+
+N_total   = N_meas*N                             # total number of measurements in the whole run
+total_t_list    = np.linspace(0, end_time, N_total+1)  # time discretization in the whole run

@@ -6,11 +6,11 @@
 import torch
 import numpy as np
 from Cost import cost_computation
-from Simulation import path_generator
+from Path_unit import generate_path_unit
 from FinteDiffApprox import FDA
 
 
-def optimize(init_cond, param_list,vn_list, Gb, Ib, meas_time, t_list, tk_list, qk_list, meal_time, dt, h, which, alpha, momentum, beta, n):
+def optimize(init_cond, param_list, vn_list, sub_vn_list, Filter, total_noise, noise, sim_idx, Gb, Ib, N_meas, T, T_list, N, meal_params, which, alpha, momentum, beta, n):
     # which -- which optimization algorithm to use (SGD, Adam, or RMSprop), alpha -- learning rate, \
     # momentum -- momentum factor (can set to 0), n -- total number gradient steps,
     # optimizes parameters using SGD algorithms
@@ -36,8 +36,8 @@ def optimize(init_cond, param_list,vn_list, Gb, Ib, meas_time, t_list, tk_list, 
 
         optimizer.zero_grad()
         param_list = param_tensor.detach().numpy()
-        grad = FDA(init_cond, param_list,vn_list, Gb, Ib, meas_time, t_list, tk_list, qk_list, meal_time, dt, h)
-        G, X, I, Ra = path_generator(init_cond, param_list, vn_list, Gb, Ib, meas_time, t_list, tk_list,qk_list, meal_time, dt, h)
+        grad = FDA(init_cond, param_list, vn_list, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params)
+        G, X, I, Ra, Z = generate_path_unit(init_cond, param_list, sub_vn_list, Filter, Z, noise, Gb, Ib, sim_idx, N_meas, T, T_list, meal_params, idx=0)
         cost = cost_computation(G, vn_list)
         cost_l.append(cost)
         grad_l.append(grad)
@@ -48,8 +48,9 @@ def optimize(init_cond, param_list,vn_list, Gb, Ib, meas_time, t_list, tk_list, 
         optimizer.step()
 
     param_list = param_tensor.detach().numpy()
-    G, X, I, Ra = path_generator(init_cond, param_list, vn_list, Gb, Ib, meas_time, t_list, tk_list, qk_list, meal_time,dt, h)
+    G, X, I, Ra, Z = generate_path_unit(init_cond, param_list, sub_vn_list, Filter, Z, noise, Gb, Ib, sim_idx, N_meas, T, T_list, meal_params, idx=0)
     cost = cost_computation(G, vn_list)
     cost_l.append(cost)
 
     return param_list, cost_l, grad_l
+
