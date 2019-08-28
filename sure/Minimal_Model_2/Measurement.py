@@ -7,12 +7,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Path_unit import generate_path_unit
 
-def advance_person(true_init_cond, vn_list, N_meas, sim_idx, T, T_list, noise):
+def advance_person(true_init_cond, control_gain, N_meas, sim_idx, T, T_list, noise):
     """simulate the real person, with that person’s physical parameters
     take input from the controller and use the noise path to advance by time T and generate a new
     (noisy) observation
     @:param true_init_cond    true initial condition for the human subject
-    @:param vn_list:          control input
+    @:param control_gain = [h1,h2,h3,h4]:    control of the whole run: h1(G-Gb)+h2(X)+h3(I-Ib)+h4(Ra)
     @:param N_meas:           the number of measurements
     @:param sim_idx:          represent which control simulation it is
     @:param T_list:           time discretization in one control simulation
@@ -48,7 +48,7 @@ def advance_person(true_init_cond, vn_list, N_meas, sim_idx, T, T_list, noise):
     Filter = [0,0,0,0]          # we do not need filter when making up the person
     Z = np.zeros(len(T_list))   # Z in the generate_path_unit is used for filtering, so we do not need it neither
 
-    G, X, I, Ra = generate_path_unit(true_init_cond, param_list, vn_list, Filter, Z, noise, Gb, Ib, sim_idx, N_meas, T, T_list, meal_params, idx=1)
+    G, X, I, Ra = generate_path_unit(true_init_cond, param_list, control_gain, Filter, Z, noise, Gb, Ib, sim_idx, N_meas, T, T_list, meal_params, idx=1)
     true_meas = G
     obs_meas  = true_meas[1:] + noise[1][0]
     true_init_cond = [G[-1],X[-1],I[-1],Ra[-1]]

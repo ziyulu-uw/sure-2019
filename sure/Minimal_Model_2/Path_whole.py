@@ -7,14 +7,14 @@ from Measurement import advance_person
 from Path_unit import generate_path_unit
 import numpy as np
 
-def generate_path_whole(init_cond, param_list, vn_list, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params):
+def generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params):
     """
     call advance_person and advance_controller N times (NT = total time) to get a path in state space
 
     @:param init_cond = G0,X0,I0,Ra_0        initial conditions of glucose level,
                                              remote insulin level, insulin level, glucose disappearance rate
     @:param param_list:                      [p1, p2, p3, tau, c1, c2]
-    @:param vn_list:                         control of the whole run
+    @:param control_gain = [h1,h2,h3,h4]:    control of the whole run: h1(G-Gb)+h2(X)+h3(I-Ib)+h4(Ra)
     @:param total_noise:                     noise of the whole run (process noise, observation noise)
     @:param Gb, Ib:                          basal values [known parameter]
     @:param N_meas:                          the number of measurements in one control simulation
@@ -40,14 +40,11 @@ def generate_path_whole(init_cond, param_list, vn_list, Filter, total_noise, Gb,
         obv_noise = total_noise[1][:,i*N_meas:(i+1)*N_meas]      # [1, N_meas in one control unit]
         noise = (process_noise, obv_noise)
 
-        # take the part of control corresponding to the control period out from the control of the whole run
-        sub_vn_list = vn_list[i*N_meas:(i+1)*N_meas]             # [1, N_meas in one control unit]
-
         ## Get the measurements in this control period
-        true_init_cond, Z = advance_person(true_init_cond, vn_list, N_meas, i, T, T_list, noise)
+        true_init_cond, Z = advance_person(true_init_cond, control_gain, N_meas, i, T, T_list, noise)
 
         # run each control unit in a row, use the last state value of this period as the initial condition for next period
-        G, X, I, Ra = generate_path_unit(init_cond, param_list, sub_vn_list, Filter, Z, noise, Gb, Ib, i, N_meas, T, T_list, meal_params, idx=0)
+        G, X, I, Ra = generate_path_unit(init_cond, param_list, control_gain, Filter, Z, noise, Gb, Ib, i, N_meas, T, T_list, meal_params, idx=0)
         init_cond = [G[-1],X[-1],I[-1],Ra[-1]]
 
         ## Record

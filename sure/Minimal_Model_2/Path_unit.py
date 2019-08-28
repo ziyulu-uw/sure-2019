@@ -7,7 +7,7 @@
 from ODE_solver import Minimod_ODE_solver
 import numpy as np
 
-def generate_path_unit(init_cond, param_list, sub_vn_list, Filter, Z, noise, Gb, Ib, sim_idx, N_meas, T, T_list, meal_params, idx):
+def generate_path_unit(init_cond, param_list, control_gain, Filter, Z, noise, Gb, Ib, sim_idx, N_meas, T, T_list, meal_params, idx):
     """
     this function generates the path in [one control period]
     Take the noisy input, the control, and filter as input -> update the states in this period
@@ -20,7 +20,7 @@ def generate_path_unit(init_cond, param_list, sub_vn_list, Filter, Z, noise, Gb,
     @:param init_cond = G0,X0,I0,Ra_0        initial conditions of glucose level,
                                              remote insulin level, insulin level, glucose disappearance rate
     @:param param_list:                      [p1, p2, p3, tau, c1, c2]
-    @:param vn_list:                         a list of controls exerted in the control period, dimension = len(T_list)
+    @:param control_gain = [h1,h2,h3,h4]:    control of the whole run: h1(G-Gb)+h2(X)+h3(I-Ib)+h4(Ra)
     @:param Filter = [K1,K2,K3,K4]           filter should be decided by SGD
     @:param Z:                               G measurements in this control period
     @:param noise = (process_noise, observation_noise)   4*N_meas, 1*N_meas
@@ -32,12 +32,13 @@ def generate_path_unit(init_cond, param_list, sub_vn_list, Filter, Z, noise, Gb,
 
     :return G,X,I,Ra                         arrays of state variables in one control period """
 
-    G0, X0, I0, Ra_0 = init_cond
-    G_list     = [G0]
-    X_list     = [X0]
-    I_list     = [I0]
-    Ra_list    = [Ra_0]
+    G, X, I, Ra = init_cond
+    G_list     = [G]
+    X_list     = [X]
+    I_list     = [I]
+    Ra_list    = [Ra]
 
+    h1, h2, h3, h4 = control_gain
     if idx==0:
         process_noise = np.zeros([4, N_meas])
     elif idx==1:
@@ -50,9 +51,10 @@ def generate_path_unit(init_cond, param_list, sub_vn_list, Filter, Z, noise, Gb,
     for i in range(N_meas):
         ## Discretize to sub section in one dt
         sub_t_list  =  T_list[int(i): int((i+1)+1)]
+        vn = h1 * (G - Gb) + h2 * X + h3 * (I - Ib) + h4 * Ra
 
         ## Solve the ODE in the sub section
-        state_variables =  Minimod_ODE_solver(init_cond, sub_t_list, param_list, sub_vn_list[i], Gb, Ib, sim_idx, T, meal_params)
+        state_variables =   Minimod_ODE_solver(init_cond, sub_t_list, param_list, vn, Gb, Ib, sim_idx, T, meal_params)
 
         '''the process noise would be added only when the function is used for making up a human subject'''
         for j in range(len(state_variables)):
@@ -73,26 +75,3 @@ def generate_path_unit(init_cond, param_list, sub_vn_list, Filter, Z, noise, Gb,
         Ra_list.append(Ra)
 
     return np.array(G_list), np.array(X_list), np.array(I_list), np.array(Ra_list)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

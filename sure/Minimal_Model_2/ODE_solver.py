@@ -17,7 +17,7 @@ def dMiniMod(x, t, param_list, vn, Gb, Ib, sim_idx, T, meal_params):
     @:param c1:         constant parameter in the insulin ODE model
     @:param c2:         constant parameter in the insulin ODE model
 
-    @:param vn_list:    a list of control exerted on the model
+    @:param vn          constant control over 5 minutes
     @:param Gb, Ib:     basal plasma glucose (mmol/l) and insulin (mU/l)
     @:param T_list:     time descritization for one control simulation
     @:param tk_list:    a list of meal time
@@ -25,12 +25,8 @@ def dMiniMod(x, t, param_list, vn, Gb, Ib, sim_idx, T, meal_params):
     @:param meal_time:  how long a meal intake last"""
 
     ## get the state variable
-    G = x[0]
-    X = x[1]
-    I = x[2]
-    Ra= x[3]
-    ## get the control
-    #vn = Constant_interpolation(t, vn_list, T_list)  # function linear_func could also be used on vn_list
+    G, X, I, Ra = x
+
     ## get the parameters
     p1, p2, p3, tau, c1, c2  = param_list
 
@@ -54,7 +50,7 @@ def Minimod_ODE_solver(init_cond, sub_t_list, param_list, vn, Gb, Ib, sim_idx, T
                         glucose appearance rate
     @:param sub_t_list: time discretization for the simulation
     @:param param_list: [p1, p2, p3, tau, c1, c2]
-    @:param vn:         a constant control exerted on the 5min interval between 2 measurements
+    @:param vn          constant control over 5 minutes
     @:param Gb, Ib:     basal plasma glucose (mmol/l) and insulin (mU/l)
     @:param T_list:     time descritization for one control simulation
     @:param tk_list:    a list of meal time

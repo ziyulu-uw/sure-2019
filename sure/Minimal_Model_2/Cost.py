@@ -5,11 +5,14 @@
 
 import numpy as np
 
-def cost_computation(G, vn_list):
-    """a function to calculate the total cost from time 0 to t1
-    :param G     simulation result of glucose function
-    :param vn_list:    a list of control exerted on the model
-    :return cost in the current prediction and control horizon"""
+def cost_computation(G, X, I, Ra, Gb, Ib, control_gain):
+    """
+    a function to calculate the total cost from time 0 to t1
+    :param G, X, I, Ra: list of state variables of the whole run
+    :param Gb, Ib:      basal values
+    :param control_gain = [h1,h2,h3,h4]
+    :return: cost of the whole run
+    """
 
     G_hat = np.zeros(len(G))
     for i in range(len(G)):
@@ -20,7 +23,9 @@ def cost_computation(G, vn_list):
         else:  # within the euglycemic zone
             G_hat[i] = 0
 
-    J = 1/len(G)*(np.sum(G_hat**2) + np.sum(vn_list**2)*50)
+    h1, h2, h3, h4 = control_gain
+    vn_list = h1*(G-Gb) + h2*X + h3*(I-Ib) + h4*Ra
+    J = 1/len(G)*(np.sum(G_hat**2) + np.sum(vn_list**2)/50)
     """lambda is 50 decided in the paper"""
 
     return J

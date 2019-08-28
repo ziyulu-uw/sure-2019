@@ -27,7 +27,7 @@ I0 = 0.38  # unit: mU/l     [unknown initial condition]
 Ib = 0
 
 # Minimal Model Parameter
-p1 = 0.6  # param determined by bio-experiments (unit: min^-1)
+p1 = 3.6  # param determined by bio-experiments (unit: min^-1)
 p2 = 0.0122  # unit: min^-1
 p3 = 1.7e-5  # unit: min^-2 mU/l
 Gb = 125  # basal plasma glucose (unit:mg/dl)
@@ -40,13 +40,12 @@ X0 = 0
 # Wrap the parameters into a list:
 param_list = [p1, p2, p3, tau, c1, c2]
 init_cond  = [G0, X0, I0, Ra_0]
-
 # Cost function parameter
 lam = 0.5
 
 # Code Parameter
-end_time  = 400            # unit: min
-T         = 100             # unit: min;    Time for one control period (Better to choose a number that divides end_time)
+end_time  = 1000            # unit: min
+T         = 1000             # unit: min;    Time for one control period (Better to choose a number that divides end_time)
 N         = end_time//T     # we will call the controller N times in a complete simulation NT = end_time
 
 # time discretization for measurements in one control period
