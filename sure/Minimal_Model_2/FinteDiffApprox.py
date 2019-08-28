@@ -27,16 +27,16 @@ def FDA_param(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, 
 
         G_f, X_f, I_f, Ra_f, mf = generate_path_whole(init_cond, param_shift_f, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params)
         G_b, X_b, I_b, Ra_b, mb = generate_path_whole(init_cond, param_shift_b, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params)
-        cost_f = cost_computation(G_f, X_f, I_f, Ra_f, Gb, Ib, control_gain)#J(a+s)
+        cost_f = cost_computation(G_f, X_f, I_f, Ra_f, Gb, Ib, control_gain) #J(a+s)
         cost_b = cost_computation(G_b, X_b, I_b, Ra_b, Gb, Ib, control_gain) #J(a-s)
-        dJ_da = (cost_f-cost_b)/(s * 2)            # [J(a+s)-J(a-s)]/ 2s
+        dJ_da = (cost_f-cost_b)/(a-b)            # [J(a)-J(b)]/ 2(a-b)
         param_partial_derivative[i] = dJ_da
     return param_partial_derivative
 
 def FDA_control(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params):
     control_partial_derivative = np.zeros(len(control_gain))
     for i in range(len(control_gain)):
-        s = 0.0000001
+        s = 0.001
         a = control_gain[i] * (1 + s)  # shift a parameter s of its original value
         b = control_gain[i] * (1 - s)
 
@@ -48,9 +48,9 @@ def FDA_control(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib
 
         G_f, X_f, I_f, Ra_f, mf = generate_path_whole(init_cond, param_list, control_shift_f, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params)
         G_b, X_b, I_b, Ra_b, mb = generate_path_whole(init_cond, param_list, control_shift_b, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params)
-        cost_f = cost_computation(G_f, X_f, I_f, Ra_f, Gb, Ib, control_gain)  # J(a+s)
-        cost_b = cost_computation(G_b, X_b, I_b, Ra_b, Gb, Ib, control_gain)  # J(a-s)
-        dJ_da = (cost_f - cost_b) / (s * 2)  # [J(a+s)-J(a-s)]/ 2s
+        cost_f = cost_computation(G_f, X_f, I_f, Ra_f, Gb, Ib, control_shift_f)  # J(a+s)
+        cost_b = cost_computation(G_b, X_b, I_b, Ra_b, Gb, Ib, control_shift_b)  # J(a-s)
+        dJ_da = (cost_f - cost_b) / (a-b)   # [J(a)-J(b)]/ 2(a-b)
         control_partial_derivative[i] = dJ_da
     return control_partial_derivative
 
@@ -72,6 +72,6 @@ def FDA_filter(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
         G_b, X_b, I_b, Ra_b, mb = generate_path_whole(init_cond, param_list, control_gain, filter_shift_b, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params)
         cost_f = cost_computation(G_f, X_f, I_f, Ra_f, Gb, Ib, control_gain)  # J(a+s)
         cost_b = cost_computation(G_b, X_b, I_b, Ra_b, Gb, Ib, control_gain)  # J(a-s)
-        dJ_da = (cost_f - cost_b) / (s * 2)  # [J(a+s)-J(a-s)]/ 2s
+        dJ_da = (cost_f - cost_b) / (a-b)   # [J(a)-J(b)]/ 2(a-b)
         filter_partial_derivative[i] = dJ_da
     return filter_partial_derivative

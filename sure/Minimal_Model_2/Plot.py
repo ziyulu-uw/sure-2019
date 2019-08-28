@@ -49,3 +49,35 @@ def Plot_X(t_list, sol):
     plt.ylabel("$X$ (mg/dl)")
     plt.show()
 
+'''
+##Plot G X I Ra
+plt.plot(total_t_list , G)
+plt.title("Glucose $G(t)$")
+plt.xlabel("min")
+plt.ylabel("$G$ (mg/dl)")
+#plt.legend()
+plt.show()
+
+plt.plot(total_t_list , X)
+plt.title("$X(t)$")
+plt.xlabel("min")
+plt.ylabel("$X$ (mg/dl)")
+#plt.legend()
+plt.show()
+
+plt.plot(total_t_list, I)
+plt.title("Insulin $I(t)$")
+plt.xlabel("min")
+plt.ylabel("$I$ (mU/l)")
+#plt.legend()
+plt.show()
+
+plt.plot(total_t_list, Ra)
+plt.title("Glucose Rate of Appearance $R_a$")
+plt.xlabel("min")
+plt.ylabel("$R_a$ (mg/kg/min)")
+#plt.legend()
+plt.show()
+
+Plot_measurement(noisy_meas, total_t_list)
+'''
