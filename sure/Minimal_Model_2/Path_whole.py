@@ -31,6 +31,7 @@ def generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise
     X_list = [X0]
     I_list = [I0]
     Ra_list= [Ra_0]
+    true_G_list = [G0]
     true_init_cond = init_cond.copy()
     meas_list = []
 
@@ -41,7 +42,7 @@ def generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise
         noise = (process_noise, obv_noise)
 
         ## Get the measurements in this control period
-        true_init_cond, Z = advance_person(true_init_cond, control_gain, N_meas, i, T, T_list, noise)
+        true_init_cond, Z, true_G = advance_person(true_init_cond, control_gain, N_meas, i, T, T_list, noise)  # advance_person call generate_path_unit
 
         # run each control unit in a row, use the last state value of this period as the initial condition for next period
         G, X, I, Ra = generate_path_unit(init_cond, param_list, control_gain, Filter, Z, noise, Gb, Ib, i, N_meas, T, T_list, meal_params, idx=0)
@@ -52,7 +53,9 @@ def generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise
         X_list.extend(list(X[1:]))
         I_list.extend(list(I[1:]))
         Ra_list.extend(list(Ra[1:]))
+        true_G_list.extend(list(true_G[1:]))
         meas_list.extend(list(Z))
 
-    return np.array(G_list), np.array(X_list), np.array(I_list), np.array(Ra_list), np.array(meas_list)
+    model_state_variable = [np.array(G_list), np.array(X_list), np.array(I_list), np.array(Ra_list)]
+    return  model_state_variable, np.array(meas_list), np.array(true_G_list)
 

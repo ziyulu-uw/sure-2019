@@ -52,7 +52,7 @@ def advance_person(true_init_cond, control_gain, N_meas, sim_idx, T, T_list, noi
     true_meas = G
     obs_meas  = true_meas[1:] + noise[1][0]
     true_init_cond = [G[-1],X[-1],I[-1],Ra[-1]]
-    return true_init_cond, obs_meas
+    return true_init_cond, obs_meas, true_meas
 
 def Plot_measurement(noisy_meas, t_list):
     plt.plot(t_list[:-1], noisy_meas,'o')

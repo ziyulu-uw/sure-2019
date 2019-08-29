@@ -36,10 +36,10 @@ def optimize_param(init_cond, param_list, control_gain, Filter, total_noise, Gb,
     for i in range(n):
         optimizer.zero_grad()
         param_list = param_tensor.detach().numpy()
-        G, X, I, Ra, Z = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
+        state_variable, Z, true_G = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
                                              T, T_list, N, meal_params)
-        state_variable = [G, X, I, Ra]
-        grad, cost = FDA_param(state_variable, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
+
+        grad, cost = FDA_param(state_variable, true_G, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
                                T, T_list, N, meal_params)
         cost_l.append(cost)
         grad_l.append(grad)
@@ -50,9 +50,9 @@ def optimize_param(init_cond, param_list, control_gain, Filter, total_noise, Gb,
         optimizer.step()
 
     param_list = param_tensor.detach().numpy()
-    G, X, I, Ra, Z = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
+    state_variable, Z, true_G = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
                                          T_list, N, meal_params)
-    cost = cost_computation(G, X, I, Ra, Gb, Ib, control_gain)
+    cost = cost_computation(true_G, state_variable, Gb, Ib, control_gain)
     cost_l.append(cost)
 
     return param_list, cost_l, grad_l
@@ -84,10 +84,9 @@ def optimize_control(init_cond, param_list, control_gain, Filter, total_noise, G
     for i in range(n):
         optimizer.zero_grad()
         control_gain = control_tensor.detach().numpy()
-        G, X, I, Ra, Z = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
+        state_variable, Z, true_G = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
                                              T, T_list, N, meal_params)
-        state_variable = [G, X, I, Ra]
-        grad, cost = FDA_control(state_variable, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
+        grad, cost = FDA_control(state_variable, true_G, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
                                  N_meas, T, T_list, N, meal_params)
         cost_l.append(cost)
         grad_l.append(grad)
@@ -98,9 +97,9 @@ def optimize_control(init_cond, param_list, control_gain, Filter, total_noise, G
         optimizer.step()
 
     control_gain = control_tensor.detach().numpy()
-    G, X, I, Ra, Z = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
+    state_variable, Z, true_G = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
                                          T_list, N, meal_params)
-    cost = cost_computation(G, X, I, Ra, Gb, Ib, control_gain)
+    cost = cost_computation(true_G, state_variable, Gb, Ib, control_gain)
     cost_l.append(cost)
 
     return control_gain, cost_l, grad_l
@@ -132,10 +131,9 @@ def optimize_filter(init_cond, param_list, control_gain, Filter, total_noise, Gb
     for i in range(n):
         optimizer.zero_grad()
         Filter = Filter_tensor.detach().numpy()
-        G, X, I, Ra, Z = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
+        state_variable, Z, true_G = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
                                              T, T_list, N, meal_params)
-        state_variable = [G, X, I, Ra]
-        grad, cost = FDA_filter(state_variable, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
+        grad, cost = FDA_filter(state_variable, true_G, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
                                 N_meas, T, T_list, N, meal_params)
         cost_l.append(cost)
         grad_l.append(grad)
@@ -146,9 +144,9 @@ def optimize_filter(init_cond, param_list, control_gain, Filter, total_noise, Gb
         optimizer.step()
 
     Filter = Filter_tensor.detach().numpy()
-    G, X, I, Ra, Z = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
+    state_variable, Z, true_G = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
                                          T_list, N, meal_params)
-    cost = cost_computation(G, X, I, Ra, Gb, Ib, control_gain)
+    cost = cost_computation(true_G, state_variable, Gb, Ib, control_gain)
     cost_l.append(cost)
 
     return Filter, cost_l, grad_l

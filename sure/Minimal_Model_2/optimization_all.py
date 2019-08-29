@@ -49,12 +49,11 @@ def optimize_filter_control(init_cond, param_list, control_gain, Filter, total_n
         FC = FC_tensor.detach().numpy()
         Filter = FC[:len(Filter)]
         control_gain = FC[len(Filter):]
-        G, X, I, Ra, Z = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
+        state_variable, Z, true_G = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
                                              T, T_list, N, meal_params)
-        state_variable = [G, X, I, Ra]
-        gradF, cost = FDA_filter(state_variable, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
+        gradF, cost = FDA_filter(state_variable, true_G,  init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
                                  N_meas, T, T_list, N, meal_params)
-        gradC, cost = FDA_control(state_variable, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
+        gradC, cost = FDA_control(state_variable, true_G, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
                                  N_meas, T, T_list, N, meal_params)
         grad = np.concatenate((np.array(gradF), np.array(gradC)), axis=0)
         cost_l.append(cost)
@@ -68,9 +67,9 @@ def optimize_filter_control(init_cond, param_list, control_gain, Filter, total_n
     FC = FC_tensor.detach().numpy()
     Filter = FC[:len(Filter)]
     control_gain = FC[len(Filter):]
-    G, X, I, Ra, Z = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
+    state_variable, Z, true_G = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
                                          T_list, N, meal_params)
-    cost = cost_computation(G, X, I, Ra, Gb, Ib, control_gain)
+    cost = cost_computation(true_G, state_variable, Gb, Ib, control_gain)
     cost_l.append(cost)
     filter_l[:, i] = Filter
     control_l[:, i] = control_gain
