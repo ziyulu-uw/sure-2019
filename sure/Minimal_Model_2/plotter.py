@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def multi_plot(data, p, which, nIter, alpha, M, betas, label=None):
+def multi_plot(data, p, which, nIter, alpha, M, betas, log, label=None):
 
     if p == 1:  # when plotting filter_l, control_l, gradF_l, or gradC_l
         n = len(data[0])
@@ -15,13 +15,21 @@ def multi_plot(data, p, which, nIter, alpha, M, betas, label=None):
         plt.figure(1)
         for i in range(len(data)):
             plt.plot(x, data[i], label='{}{}'.format(label, i+1))
-
-        # plt.yscale("log")
+        if log is True:
+            plt.yscale("log")
         plt.rcParams["axes.titlesize"] = 8
         plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {}".
                   format(which, nIter, alpha, M, betas))
         plt.xlabel("number of optimization steps")
-        plt.ylabel("filter parameters")
+        if label == 'K':
+            plt.ylabel("filter parameters")
+        elif label == 'H':
+            plt.ylabel("control parameters")
+        elif label == 'grad K':
+            plt.ylabel("gradients of filter parameters")
+        elif label == 'grad H':
+            plt.ylabel("gradients of control parameters")
+
         plt.legend()
         plt.grid(True)
         plt.show()
@@ -31,7 +39,8 @@ def multi_plot(data, p, which, nIter, alpha, M, betas, label=None):
         x = [i for i in range(n)]
         plt.figure(1)
         plt.plot(x, data)
-        plt.yscale("log")
+        if log is True:
+            plt.yscale("log")
         plt.rcParams["axes.titlesize"] = 8
         plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {}".
                   format(which, nIter, alpha, M, betas))
@@ -48,7 +57,8 @@ def multi_plot(data, p, which, nIter, alpha, M, betas, label=None):
         for i in range(len(data)):
             plt.plot(x, data[i], label='Cost: M={}'.format(label[i]))
 
-        plt.yscale("log")
+        if log is True:
+            plt.yscale("log")
         plt.rcParams["axes.titlesize"] = 8
         plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {}".
                   format(which, nIter, alpha, M, betas))
@@ -59,9 +69,18 @@ def multi_plot(data, p, which, nIter, alpha, M, betas, label=None):
         plt.show()
 
 
-all_data = np.load('out.npz')
+all_data = np.load('out500_lr5_b99.npz')
 print(sorted(all_data.files))
 # print(all_data['Filter'])
-data = all_data['filter_l']
+cost_l = all_data['cost_l']
+filter_l = all_data['filter_l']
+control_l = all_data['control_l']
+gradF_l = all_data['gradF_l']
+gradC_l = all_data['gradC_l']
 
-multi_plot(data, p=1, which='RMSprop', nIter=10, alpha=1e-3, M=1, betas=0.9, label='K')
+
+multi_plot(cost_l, p=2, which='RMSprop', nIter=100, alpha=1e-3, M=1, betas=0.99, log=True, label=None)
+multi_plot(filter_l, p=1, which='RMSprop', nIter=100, alpha=1e-3, M=1, betas=0.99, log=False, label='K')
+multi_plot(control_l, p=1, which='RMSprop', nIter=100, alpha=1e-3, M=1, betas=0.99, log=False, label='H')
+multi_plot(gradF_l, p=1, which='RMSprop', nIter=100, alpha=1e-3, M=1, betas=0.99, log=False, label='grad K')
+multi_plot(gradC_l, p=1, which='RMSprop', nIter=100, alpha=1e-3, M=1, betas=0.99, log=False, label='grad H')

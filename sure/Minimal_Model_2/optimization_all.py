@@ -12,7 +12,7 @@ from FDA import FDA_control, FDA_filter, FDA_param
 
 
 def optimize_filter_control(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
-                            meal_params, which, alpha, momentum, betas, M, n):
+                            meal_params, which, alpha, momentum, beta1, beta2, M, n):
     # which -- which optimization algorithm to use (SGD, Adam, or RMSprop), \
     # alpha -- learning rate, \
     # momentum -- momentum factor (can set to 0), \
@@ -28,15 +28,9 @@ def optimize_filter_control(init_cond, param_list, control_gain, Filter, Gb, Ib,
     if which == 'SGD':
         optimizer = torch.optim.SGD([FC_tensor], lr=alpha, momentum=momentum)
     elif which == 'Adam':
-        if betas is None:
-            optimizer = torch.optim.Adam([FC_tensor], lr=alpha)
-        else:
-            optimizer = torch.optim.Adam([FC_tensor], lr=alpha, betas=betas)
+        optimizer = torch.optim.Adam([FC_tensor], lr=alpha, betas=(beta1,beta2))
     elif which == 'RMSprop':
-        if betas is None:
-            optimizer = torch.optim.RMSprop([FC_tensor], lr=alpha)
-        else:
-            optimizer = torch.optim.RMSprop([FC_tensor], lr=alpha, alpha=betas)
+        optimizer = torch.optim.RMSprop([FC_tensor], lr=alpha, alpha=beta1)
     else:
         print("Invalid algorithm")
         return
