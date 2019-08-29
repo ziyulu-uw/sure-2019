@@ -1,47 +1,40 @@
-# Author: Xinyu Li
-# Email: xl1796@nyu.edu
+# Author: Ziyu Lu
+# Email: zl1546@nyu.edu
 # Date: August 2019
-# Description: The main function to run the model
+# Description: parses user input to run the model
 
+import argparse
 from Initialization import total_t_list, N_meas, init_cond, Gb, Ib, meal_params, param_list, T, T_list, N
 import numpy as np
-import matplotlib.pyplot as plt
-from Path_whole import generate_path_whole
-from Noise_generator import noise_path
-from Measurement import Plot_measurement
-from FDA import FDA_control, FDA_param, FDA_filter
-from optimization_all import optimize_filter_control
-from optimization_sep import optimize_filter, optimize_param, optimize_control
-from Cost import cost_computation
+from wrapper import optim_wrapper
 
-Filter = [0.01, 0.01, 0.01, 0.01]
 
-h1 = 15;
-h2 = 3;
-h3 = 0.1;
-h4 = 0.15
-control_gain = [h1, h2, h3, h4]
+parser = argparse.ArgumentParser()
 
-##simulation with control
-total_noise = noise_path(init_cond, N * N_meas, seed_num=1)
-model_state_variable, noisy_meas, true_G = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
-                                              T, T_list, N, meal_params)
+parser.add_argument('-k1', type=float, default=0.01, help='1st parameter in the filter')
+parser.add_argument('-k2', type=float, default=0.01, help='2nd parameter in the filter')
+parser.add_argument('-k3', type=float, default=0.01, help='3rd parameter in the filter')
+parser.add_argument('-k4', type=float, default=0.01, help='4th parameter in the filter')
+parser.add_argument('-h1', type=float, default=15,   help='1st parameter in the control')
+parser.add_argument('-h2', type=float, default=3,    help='2nd parameter in the control')
+parser.add_argument('-h3', type=float, default=0.1,  help='3rd parameter in the control')
+parser.add_argument('-h4', type=float, default=0.15, help='4th parameter in the control')
 
-grad = FDA_filter(model_state_variable, true_G, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params)
-print(grad)
 
-cost = cost_computation(true_G, model_state_variable, Gb, Ib, control_gain)
-n = 10
+parser.add_argument('-w', type=str, default='RMSprop', help='which optimization algorithm to use')
+parser.add_argument('-lr', '--learning_rate', type=float, default=1e-3, help='learning rate')
+parser.add_argument('-mon', '--momentum', type=float, default=0, help='momentum')
+parser.add_argument('-b', '--betas', type=float, default=0.9, help='smoothing constant')
+parser.add_argument('-M', '--minibatch', type=int, default=1, help='minibatch size')
+parser.add_argument('-n', '--nIter', type=int, default=100, help='number of training iterations')
+parser.add_argument('-f', '--file_name', type=str, default='out', help='name of the output file')
 
-# Filter, cost_l, grad_l= optimize_control(init_cond, param_list, control_gain, Filter, total_noise,
-#                                                                Gb, Ib, N_meas, T, T_list, N, meal_params,
-#                                                                which='RMSprop', alpha=1e-4, momentum=0, beta=0.9, n=n)
 
-Filter, control_gain, cost_l, grad_l, filter_l, control_l = optimize_filter_control(init_cond, param_list, control_gain, Filter, total_noise,
-                                                               Gb, Ib, N_meas, T, T_list, N, meal_params,
-                                                               which='RMSprop', alpha=1e-4, momentum=0, betas=0.9, n=n)
-x = [i for i in range(n + 1)]
-plt.plot(x, cost_l)
-plt.xlabel("number of optimization steps")
-plt.ylabel("cost")
-plt.show()
+args = parser.parse_args()
+
+np.random.seed(1)
+Filter = [args.k1, args.k2, args.k3, args.k4]
+control_gain = [args.h1, args.h2, args.h3, args.h4]
+
+Filter, control_gain, cost_l, filter_l, control_l, gradF_l, gradC_l = optim_wrapper(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
+            meal_params, which=args.w, alpha=args.learning_rate, momentum=args.momentum, betas=args.betas, M=args.minibatch, n=args.nIter, fname=args.file_name)

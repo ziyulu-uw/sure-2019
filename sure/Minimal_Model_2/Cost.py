@@ -5,6 +5,7 @@
 
 import numpy as np
 
+
 def cost_computation(true_G, model_state_variable, Gb, Ib, control_gain, lbda=1):
     """
     a function to calculate the total cost from time 0 to t1
@@ -14,7 +15,7 @@ def cost_computation(true_G, model_state_variable, Gb, Ib, control_gain, lbda=1)
     :param control_gain = [h1,h2,h3,h4]
     :return: cost of the whole run
     """
-    G,X,I,Ra =  model_state_variable
+    G,X,I,Ra = model_state_variable
     G_hat = np.zeros(len(G))
 
     for i in range(len(G)):
