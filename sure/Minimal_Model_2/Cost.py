@@ -5,7 +5,7 @@
 
 import numpy as np
 
-def cost_computation(G, X, I, Ra, Gb, Ib, control_gain):
+def cost_computation(G, X, I, Ra, Gb, Ib, control_gain, lbda=1):
     """
     a function to calculate the total cost from time 0 to t1
     :param G, X, I, Ra: list of state variables of the whole run
@@ -25,7 +25,7 @@ def cost_computation(G, X, I, Ra, Gb, Ib, control_gain):
 
     h1, h2, h3, h4 = control_gain
     vn_list = h1*(G-Gb) + h2*X + h3*(I-Ib) + h4*Ra
-    J = 1/len(G)*(np.sum(G_hat**2) + np.sum(vn_list**2)/50)
-    """lambda is 50 decided in the paper"""
+    J = 1/(2*len(G))*(np.sum(G_hat**2) + lbda*np.sum(vn_list**2))
+    """lbda = 50 decided in the paper"""
 
     return J
