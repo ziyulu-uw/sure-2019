@@ -1,3 +1,8 @@
+# Author: Xinyu Li
+# Email: xl1796@nyu.edu
+# Date: August 2019
+# Description: example to generate a path and plot
+
 from Path_whole import generate_path_whole
 from Initialization import init_cond, N, N_meas, param_list, Gb, Ib, T, T_list, meal_params,total_t_list
 from Noise_generator import noise_path

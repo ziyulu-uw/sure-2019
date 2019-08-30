@@ -8,7 +8,6 @@ from Initialization import total_t_list, N_meas, init_cond, Gb, Ib, meal_params,
 import numpy as np
 from wrapper import optim_wrapper
 
-
 parser = argparse.ArgumentParser()
 
 parser.add_argument('-k1', type=float, default=0.01, help='1st parameter in the filter')
@@ -40,3 +39,4 @@ control_gain = [args.h1, args.h2, args.h3, args.h4]
 Filter, control_gain, cost_l, filter_l, control_l, gradF_l, gradC_l = optim_wrapper(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
                                                                                     meal_params, which=args.w, alpha=args.learning_rate, momentum=args.momentum,
                                                                                     beta1=args.beta1, beta2=args.beta2, M=args.minibatch, n=args.nIter, fname=args.file_name)
+

@@ -17,7 +17,6 @@ def cost_computation(true_G, model_state_variable, Gb, Ib, control_gain, lbda=1)
     """
     G,X,I,Ra = model_state_variable
     G_hat = np.zeros(len(G))
-
     for i in range(len(G)):
         if true_G[i] > 140:  # higher than the upper bound
             G_hat[i] = true_G[i] - 140

@@ -24,9 +24,9 @@ def FDA_param(state_variable, true_G, init_cond, param_list, control_gain, Filte
         param_shift_f = param_list.copy()  # make a copy of original parameter list
         param_shift_f[i] = a  # assign the new list with a shifted parameter
 
-        state_variable_f, Z_f, true_G_f = generate_path_whole(init_cond, param_shift_f, control_gain, Filter, total_noise, Gb,
+        state_variable_f, Z_f, true_state_f = generate_path_whole(init_cond, param_shift_f, control_gain, Filter, total_noise, Gb,
                                                       Ib, N_meas, T, T_list, N, meal_params)
-
+        true_G_f = true_state_f[0]
         cost_f = cost_computation(true_G_f, state_variable_f, Gb, Ib, control_gain)  # J(a+s)
         cost = cost_computation(true_G, state_variable, Gb, Ib, control_gain)  # J(a-s)
 
@@ -47,8 +47,9 @@ def FDA_control(state_variable, true_G, init_cond, param_list, control_gain, Fil
         control_shift_f = control_gain.copy()  # make a copy of original parameter list
         control_shift_f[i] = a  # assign the new list with a shifted parameter
 
-        state_variable_f, Z_f, true_G_f = generate_path_whole(init_cond, param_list, control_shift_f, Filter, total_noise, Gb,
+        state_variable_f, Z_f, true_state_f = generate_path_whole(init_cond, param_list, control_shift_f, Filter, total_noise, Gb,
                                                       Ib, N_meas, T, T_list, N, meal_params)
+        true_G_f = true_state_f[0]
         cost_f = cost_computation(true_G_f, state_variable_f, Gb, Ib, control_shift_f)  # J(a+s)
         cost = cost_computation(true_G, state_variable, Gb, Ib, control_gain)  # J(a-s)
 
@@ -69,8 +70,9 @@ def FDA_filter(state_variable, true_G, init_cond, param_list, control_gain, Filt
         filter_shift_f = Filter.copy()  # make a copy of original parameter list
         filter_shift_f[i] = a  # assign the new list with a shifted parameter
 
-        state_variable_f, Z_f, true_G_f  = generate_path_whole(init_cond, param_list, control_gain, filter_shift_f, total_noise,
+        state_variable_f, Z_f, true_state_f  = generate_path_whole(init_cond, param_list, control_gain, filter_shift_f, total_noise,
                                                       Gb, Ib, N_meas, T, T_list, N, meal_params)
+        true_G_f = true_state_f[0]
         cost_f = cost_computation(true_G_f, state_variable_f,Gb, Ib, control_gain)  # J(a+s)
         cost = cost_computation(true_G, state_variable,  Gb, Ib, control_gain)  # J(a-s)
 
