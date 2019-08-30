@@ -69,7 +69,7 @@ def multi_plot(data, p, which, nIter, alpha, M, betas, log, label=None):
         plt.show()
 
 
-all_data = np.load('out100_lr4_b9.npz')
+all_data = np.load('out.npz')
 print(sorted(all_data.files))
 # print(all_data['Filter'])
 cost_l = all_data['cost_l']

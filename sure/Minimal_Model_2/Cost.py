@@ -6,7 +6,7 @@
 import numpy as np
 
 
-def cost_computation(true_G, model_state_variable, Gb, Ib, control_gain, lbda=0.1):
+def cost_computation(true_G, model_state_variable, Gb, Ib, control_gain, lbda=0):
     """
     a function to calculate the total cost from time 0 to t1
     :param true_G:      a true G list of the human, not the ODE model
