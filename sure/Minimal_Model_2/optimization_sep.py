@@ -5,6 +5,7 @@
 
 import torch
 import numpy as np
+from Noise_generator import noise_path
 from Cost import cost_computation
 from Path_whole import generate_path_whole
 from FDA import FDA_control, FDA_filter, FDA_param
@@ -59,8 +60,8 @@ def optimize_param(init_cond, param_list, control_gain, Filter, total_noise, Gb,
     return param_list, cost_l, grad_l
 
 
-def optimize_control(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N,
-                     meal_params, which, alpha, momentum, beta, n):
+def optimize_control(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
+                     meal_params, which, alpha, momentum, beta1, beta2, n):
     # which -- which optimization algorithm to use (SGD, Adam, or RMSprop), alpha -- learning rate, \
     # momentum -- momentum factor (can set to 0), n -- total number gradient steps,
     # optimizes parameters using SGD algorithms
@@ -72,40 +73,43 @@ def optimize_control(init_cond, param_list, control_gain, Filter, total_noise, G
     if which == 'SGD':
         optimizer = torch.optim.SGD([control_tensor], lr=alpha, momentum=momentum)
     elif which == 'Adam':
-        optimizer = torch.optim.Adam([control_tensor], lr=alpha)
+        optimizer = torch.optim.Adam([control_tensor], lr=alpha, betas=(beta1,beta2))
     elif which == 'RMSprop':
-        optimizer = torch.optim.RMSprop([control_tensor], lr=alpha, alpha=beta)
+        optimizer = torch.optim.RMSprop([control_tensor], lr=alpha, alpha=beta1)
     else:
         print("Invalid algorithm")
         return
 
     cost_l = []
-    grad_l = []
+    control_l = np.zeros((4, n + 1))
+    grad_l = np.zeros((4, n))
 
     for i in range(n):
         optimizer.zero_grad()
         control_gain = control_tensor.detach().numpy()
+        total_noise = noise_path(init_cond, N * N_meas)
         state_variable, Z, true_state_variable = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
                                              T, T_list, N, meal_params)
         true_G = true_state_variable[0]
         grad, cost = FDA_control(state_variable, true_G, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
                                  N_meas, T, T_list, N, meal_params)
         cost_l.append(cost)
-        grad_l.append(grad)
-        # print(grad)
-        # print(param_tensor.grad)
+        control_l[:, i] = control_gain
+        grad_l[:, i] = np.array(grad)
         grad_tensor = torch.tensor(grad, requires_grad=False)
         control_tensor.grad = grad_tensor
         optimizer.step()
 
     control_gain = control_tensor.detach().numpy()
+    total_noise = noise_path(init_cond, N * N_meas)
     state_variable, Z, true_state_variable = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
                                          T_list, N, meal_params)
     true_G = true_state_variable[0]
     cost = cost_computation(true_G, state_variable, Gb, Ib, control_gain)
     cost_l.append(cost)
+    control_l[:, n] = control_gain
 
-    return control_gain, cost_l, grad_l
+    return control_l, cost_l, grad_l
 
 
 def optimize_filter(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params,

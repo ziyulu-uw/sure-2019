@@ -69,18 +69,19 @@ def multi_plot(data, p, which, nIter, alpha, M, betas, log, label=None):
         plt.show()
 
 
-all_data = np.load('out500_lr5_b99.npz')
+all_data = np.load('out100_lr4_b9.npz')
 print(sorted(all_data.files))
 # print(all_data['Filter'])
 cost_l = all_data['cost_l']
+print(cost_l[-1])
 filter_l = all_data['filter_l']
 control_l = all_data['control_l']
 gradF_l = all_data['gradF_l']
 gradC_l = all_data['gradC_l']
 
 
-multi_plot(cost_l, p=2, which='RMSprop', nIter=100, alpha=1e-3, M=1, betas=0.99, log=True, label=None)
-multi_plot(filter_l, p=1, which='RMSprop', nIter=100, alpha=1e-3, M=1, betas=0.99, log=False, label='K')
-multi_plot(control_l, p=1, which='RMSprop', nIter=100, alpha=1e-3, M=1, betas=0.99, log=False, label='H')
-multi_plot(gradF_l, p=1, which='RMSprop', nIter=100, alpha=1e-3, M=1, betas=0.99, log=False, label='grad K')
-multi_plot(gradC_l, p=1, which='RMSprop', nIter=100, alpha=1e-3, M=1, betas=0.99, log=False, label='grad H')
+multi_plot(cost_l, p=2, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=True, label=None)
+multi_plot(filter_l, p=1, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=False, label='K')
+multi_plot(control_l, p=1, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=False, label='H')
+multi_plot(gradF_l, p=1, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=False, label='grad K')
+multi_plot(gradC_l, p=1, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=False, label='grad H')
