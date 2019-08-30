@@ -47,8 +47,9 @@ def optimize_filter_control(init_cond, param_list, control_gain, Filter, Gb, Ib,
         Filter = FC[:len(Filter)]
         control_gain = FC[len(Filter):]
         total_noise = noise_path(init_cond, N * N_meas)
-        state_variable, Z, true_G = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
+        state_variable, Z, true_state_variable = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
                                              T, T_list, N, meal_params)
+        true_G = true_state_variable[0]
         gradF, cost = FDA_filter(state_variable, true_G,  init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
                                  N_meas, T, T_list, N, meal_params)
         gradC, cost = FDA_control(state_variable, true_G, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
@@ -67,8 +68,9 @@ def optimize_filter_control(init_cond, param_list, control_gain, Filter, Gb, Ib,
     Filter = FC[:len(Filter)]
     control_gain = FC[len(Filter):]
     total_noise = noise_path(init_cond, N * N_meas)
-    state_variable, Z, true_G = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
+    state_variable, Z, true_state_variable = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
                                          T_list, N, meal_params)
+    true_G = true_state_variable[0]
     cost = cost_computation(true_G, state_variable, Gb, Ib, control_gain)
     cost_l.append(cost)
     filter_l[:, n] = Filter

@@ -34,7 +34,7 @@ def advance_person(true_init_cond, control_gain, N_meas, sim_idx, T, T_list, noi
     tau      = 100             #unit: 1
 
     ## True meal model
-    tk_list = [60, 350, 720]  # unit: min
+    tk_list = np.array([60, 350, 720])   #unit: min
     # the time that the subject take the meal
     meal_time = 25
     # meal intake value
@@ -49,10 +49,11 @@ def advance_person(true_init_cond, control_gain, N_meas, sim_idx, T, T_list, noi
     Z = np.zeros(len(T_list))   # Z in the generate_path_unit is used for filtering, so we do not need it neither
 
     G, X, I, Ra = generate_path_unit(true_init_cond, param_list, control_gain, Filter, Z, noise, Gb, Ib, sim_idx, N_meas, T, T_list, meal_params, idx=1)
+    true_state = [G,X,I,Ra]
     true_meas = G
     obs_meas  = true_meas[1:] + noise[1][0]
     true_init_cond = [G[-1],X[-1],I[-1],Ra[-1]]
-    return true_init_cond, obs_meas, true_meas
+    return true_init_cond, obs_meas, true_state
 
 def Plot_measurement(noisy_meas, t_list):
     plt.plot(t_list[:-1], noisy_meas,'o')

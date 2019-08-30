@@ -7,16 +7,16 @@ import numpy as np
 
 # Meal Input
 # meal time
-tk_list = [60, 350, 720]  # unit: min
+tk_list = np.array([60, 350, 720])*0  # unit: min
 # the time that the subject take the meal
 meal_time = 25
 # meal intake value
-qk_list = np.array([3000, 4500, 3500]) / meal_time  # unit: mg/min, from ref 1 in Xinyu's writeup
+qk_list = np.array([3000, 4500, 3500])*0 / meal_time  # unit: mg/min, from ref 1 in Xinyu's writeup
 # wrap all the meal related variables into one variable
 meal_params = (tk_list,qk_list,meal_time)
 
 # digestion coefficient
-tau = 80  # unit: 1  [unknown parameter!!!]
+tau =  80  # unit: 1  [unknown parameter!!!]
 # initial glucose rate of appearance
 Ra_0 = 5  # unit: mg/kg/min
 

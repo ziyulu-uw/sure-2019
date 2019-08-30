@@ -17,7 +17,7 @@ def noise_path(init_cond, total_N_meas):
     """
     # np.random.seed(seed_num)
     G0, X0, I0, Ra0 = init_cond
-    process_noise_cov = 1/10 * np.array(init_cond)
+    process_noise_cov = 1/20 * np.array(init_cond)
 
     process_noise = np.zeros([4, total_N_meas])
     for i in range(len(init_cond)):

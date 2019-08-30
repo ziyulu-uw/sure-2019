@@ -61,7 +61,7 @@ def Minimod_ODE_solver(init_cond, sub_t_list, param_list, vn, Gb, Ib, sim_idx, T
     x0 = init_cond
 
     ## Solve ODE system
-    x = odeint(dMiniMod, x0, sub_t_list, args=( param_list, vn, Gb, Ib, sim_idx, T, meal_params))
+    x = odeint(dMiniMod, x0, sub_t_list, args=(param_list, vn, Gb, Ib, sim_idx, T, meal_params))
 
     ## return the state at time n+1
     G = x[-1, 0]
