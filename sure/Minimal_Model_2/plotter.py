@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def multi_plot(data, p, which, nIter, alpha, M, betas, log, label=None):
+def multi_plot(data, p, which, nIter, alpha, M, beta1, beta2, log, label=None):
 
     if p == 1:  # when plotting filter_l, control_l, gradF_l, or gradC_l
         n = len(data[0])
@@ -18,8 +18,15 @@ def multi_plot(data, p, which, nIter, alpha, M, betas, log, label=None):
         if log is True:
             plt.yscale("log")
         plt.rcParams["axes.titlesize"] = 8
-        plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {}".
-                  format(which, nIter, alpha, M, betas))
+        if which == 'RMSprop':
+            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {}".
+                      format(which, nIter, alpha, M, beta1))
+        elif which == 'Adam':
+            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {},{}".
+                      format(which, nIter, alpha, M, beta1, beta2))
+        else:
+            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}".format(which, nIter, alpha, M))
+
         plt.xlabel("number of optimization steps")
         if label == 'K':
             plt.ylabel("filter parameters")
@@ -42,8 +49,15 @@ def multi_plot(data, p, which, nIter, alpha, M, betas, log, label=None):
         if log is True:
             plt.yscale("log")
         plt.rcParams["axes.titlesize"] = 8
-        plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {}".
-                  format(which, nIter, alpha, M, betas))
+        if which == 'RMSprop':
+            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {}".
+                      format(which, nIter, alpha, M, beta1))
+        elif which == 'Adam':
+            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {},{}".
+                      format(which, nIter, alpha, M, beta1, beta2))
+        else:
+            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}".format(which, nIter, alpha, M))
+
         plt.xlabel("number of optimization steps")
         plt.ylabel("cost")
         # plt.legend()
@@ -60,8 +74,15 @@ def multi_plot(data, p, which, nIter, alpha, M, betas, log, label=None):
         if log is True:
             plt.yscale("log")
         plt.rcParams["axes.titlesize"] = 8
-        plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {}".
-                  format(which, nIter, alpha, M, betas))
+        if which == 'RMSprop':
+            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {}".
+                      format(which, nIter, alpha, M, beta1))
+        elif which == 'Adam':
+            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {},{}".
+                      format(which, nIter, alpha, M, beta1, beta2))
+        else:
+            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}".format(which, nIter, alpha, M))
+
         plt.xlabel("number of optimization steps")
         plt.ylabel("cost")
         plt.legend()
@@ -69,19 +90,18 @@ def multi_plot(data, p, which, nIter, alpha, M, betas, log, label=None):
         plt.show()
 
 
-all_data = np.load('out.npz')
-print(sorted(all_data.files))
+# all_data = np.load('out1000_lr2_b9.npz')
+# print(sorted(all_data.files))
 # print(all_data['Filter'])
-cost_l = all_data['cost_l']
-print(cost_l[-1])
-filter_l = all_data['filter_l']
-control_l = all_data['control_l']
-gradF_l = all_data['gradF_l']
-gradC_l = all_data['gradC_l']
+# cost_l = all_data['cost_l']
+# filter_l = all_data['filter_l']
+# control_l = all_data['control_l']
+# print(control_l[:,500])
+# gradF_l = all_data['gradF_l']
+# gradC_l = all_data['gradC_l']
 
-
-multi_plot(cost_l, p=2, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=True, label=None)
-multi_plot(filter_l, p=1, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=False, label='K')
-multi_plot(control_l, p=1, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=False, label='H')
-multi_plot(gradF_l, p=1, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=False, label='grad K')
-multi_plot(gradC_l, p=1, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=False, label='grad H')
+# multi_plot(cost_l, p=2, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=True, label=None)
+# multi_plot(filter_l, p=1, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=False, label='K')
+# multi_plot(control_l, p=1, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=False, label='H')
+# multi_plot(gradF_l, p=1, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=False, label='grad K')
+# multi_plot(gradC_l, p=1, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=False, label='grad H')

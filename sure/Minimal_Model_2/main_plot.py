@@ -1,23 +1,30 @@
-from wrapper import optim_wrapper
-from plotter import multi_plot
+# Author: Xinyu Li, Ziyu Lu
+# Email: xl1796@nyu.edu
+# Date: August 2019
+# Description: example to generate a path and plot
+
+from Path_whole import generate_path_whole
 from Initialization import init_cond, N, N_meas, param_list, Gb, Ib, T, T_list, meal_params, total_t_list
 from Noise_generator import noise_path
-from Path_whole import generate_path_whole
+from plotter import multi_plot
 import matplotlib.pyplot as plt
+import numpy as np
 
+all_data = np.load('out1000_lr2_b9.npz')
+print(sorted(all_data.files))
+cost_l = all_data['cost_l'][:500]
+filter_l = all_data['filter_l'][:,0:500]
+control_l = all_data['control_l'][:,0:500]
+gradF_l = all_data['gradF_l'][:,0:500]
+gradC_l = all_data['gradC_l'][:,0:500]
 
-Filter = [0.01, 0.01, 0.01, 0.01]  # initial filter gain
-control_gain = [15, 3, 0.1, 0.5]   # initial control gain
 algo = 'RMSprop'  # which optimization algorithm to use (Adam, RMSprop, or SGD)
-alpha = 1e-3      # learning rate
+alpha = 1e-2      # learning rate
 momentum = 0      # momentum for SGD
 beta1 = 0.9       # smoothing constant 1 (the only beta for RMSprop)
 beta2 = 0.99      # smoothing constant 2 (the additional beta for Adam)
 M = 1             # mini-batch size
-n = 10            # number of gradient descent iterations
-
-Filter, control_gain, cost_l, filter_l, control_l, gradF_l, gradC_l = optim_wrapper(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
-            meal_params, which=algo, alpha=alpha, momentum=momentum, beta1=beta1, beta2=beta2, M=M, n=n, fname='out')
+n = 1000          # number of gradient descent iterations
 
 ## Plot the change in the cost, filter, control, and gradients
 multi_plot(cost_l, p=2, which=algo, nIter=n, alpha=alpha, M=M, beta1=beta1, beta2=beta2, log=True, label=None)
@@ -27,8 +34,13 @@ multi_plot(gradF_l, p=1, which=algo, nIter=n, alpha=alpha, M=M, beta1=beta1, bet
 multi_plot(gradC_l, p=1, which=algo, nIter=n, alpha=alpha, M=M, beta1=beta1, beta2=beta2, log=False, label='grad H')
 
 ## Compare the results before and after training
+# Filter1 = all_data['Filter']
+Filter1 = filter_l[:,-1]
+# Filter1 = [0.01, 0.01, 0.01, 0.01]
+# control_gain1 = all_data['control_gain']
+control_gain1 = control_l[:,-1]
 total_noise = noise_path(init_cond, N * N_meas)
-model_state_variable1, Z1, true_state_variable1 = generate_path_whole(init_cond, param_list, control_gain, Filter,
+model_state_variable1, Z1, true_state_variable1 = generate_path_whole(init_cond, param_list, control_gain1, Filter1,
                                                                    total_noise, Gb, Ib, N_meas, T, T_list, N,
                                                                    meal_params)
 Filter2 = [0.01, 0.01, 0.01, 0.01]
@@ -61,15 +73,3 @@ plt.title("Glucose $Ra(t)$")
 plt.legend()
 plt.show()
 
-
-'''
-from wrapper import optim_wrapper
-from plotter import multi_plot
-Filter = [0.01, 0.01, 0.01, 0.01]
-control_gain = [15, 3, 0.1, 0.5]
-control_l, cost_l, grad_l = optim_wrapper(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
-            meal_params, which='RMSprop', alpha=1e-3, momentum=0, beta1=0.9, beta2=0.99, M=1, n=10, fname=None)
-multi_plot(cost_l, p=2, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=True, label=None)
-multi_plot(control_l, p=1, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=False, label='H')
-multi_plot(grad_l, p=1, which='RMSprop', nIter=1000, alpha=1e-5, M=1, betas=0.99, log=False, label='grad H')
-'''

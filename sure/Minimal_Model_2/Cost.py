@@ -6,22 +6,23 @@
 import numpy as np
 
 
-def cost_computation(true_G, model_state_variable, Gb, Ib, control_gain, lbda=0):
+def cost_computation(true_G, model_state_variable, Gb, Ib, control_gain, ub=140, lb=80, lbda=0):
     """
     a function to calculate the total cost from time 0 to t1
     :param true_G:      a true G list of the human, not the ODE model
     :param G, X, I, Ra: list of state variables of the whole run
     :param Gb, Ib:      basal values
     :param control_gain = [h1,h2,h3,h4]
+    :param ub, lb: upper and lower bound of the euglycemic zone
     :return: cost of the whole run
     """
     G,X,I,Ra = model_state_variable
     G_hat = np.zeros(len(G))
     for i in range(len(G)):
-        if true_G[i] > 140:  # higher than the upper bound
-            G_hat[i] = true_G[i] - 140
-        elif G[i] < 80:  # lower than the lower bound
-            G_hat[i] = 80 - true_G[i]
+        if true_G[i] > ub:  # higher than the upper bound
+            G_hat[i] = true_G[i] - ub
+        elif G[i] < lb:  # lower than the lower bound
+            G_hat[i] = lb - true_G[i]
         else:  # within the euglycemic zone
             G_hat[i] = 0
 
