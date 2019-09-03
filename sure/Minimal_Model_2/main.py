@@ -10,14 +10,14 @@ from wrapper import optim_wrapper
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('-k1', type=float, default=0.01, help='1st parameter in the filter')
+parser.add_argument('-k1', type=float, default=0.1, help='1st parameter in the filter')
 parser.add_argument('-k2', type=float, default=0.01, help='2nd parameter in the filter')
 parser.add_argument('-k3', type=float, default=0.01, help='3rd parameter in the filter')
-parser.add_argument('-k4', type=float, default=0.01, help='4th parameter in the filter')
-parser.add_argument('-h1', type=float, default=15,   help='1st parameter in the control')
-parser.add_argument('-h2', type=float, default=3,    help='2nd parameter in the control')
-parser.add_argument('-h3', type=float, default=0.1,  help='3rd parameter in the control')
-parser.add_argument('-h4', type=float, default=0.15, help='4th parameter in the control')
+parser.add_argument('-k4', type=float, default=0.37, help='4th parameter in the filter')
+parser.add_argument('-h1', type=float, default=0.015,  help='1st parameter in the control')
+parser.add_argument('-h2', type=float, default=0.003,  help='2nd parameter in the control')
+parser.add_argument('-h3', type=float, default=0.0001,  help='3rd parameter in the control')
+parser.add_argument('-h4', type=float, default=0.0005, help='4th parameter in the control')
 
 
 parser.add_argument('-w',                     type=str,   default='RMSprop', help='which optimization algorithm to use')
