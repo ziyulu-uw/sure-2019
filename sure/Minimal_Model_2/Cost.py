@@ -6,7 +6,7 @@
 import numpy as np
 
 
-def cost_computation(true_G, model_state_variable, Gb, Ib, control_gain, ub=140, lb=80, lbda=0):
+def cost_computation(true_state, model_state_variable, Gb, Ib, control_gain, ub=140, lb=80, lbda=0.0):
     """
     a function to calculate the total cost from time 0 to t1
     :param true_G:      a true G list of the human, not the ODE model
@@ -17,6 +17,7 @@ def cost_computation(true_G, model_state_variable, Gb, Ib, control_gain, ub=140,
     :return: cost of the whole run
     """
     G,X,I,Ra = model_state_variable
+    true_G = true_state[0]
     G_hat = np.zeros(len(G))
     for i in range(len(G)):
         if true_G[i] > ub:  # higher than the upper bound
@@ -28,6 +29,8 @@ def cost_computation(true_G, model_state_variable, Gb, Ib, control_gain, ub=140,
 
     h1, h2, h3, h4 = control_gain
     vn_list = h1*(G-Gb) + h2*X + h3*(I-Ib) + h4*Ra
-    J = 1/(2*len(G))*(np.sum(G_hat**2) + lbda*np.sum(vn_list**2))
+    J = 1/(2*len(G))*(np.sum(G_hat**2) + lbda*np.sum(vn_list**2) + np.sum((G-true_G)**2) + 100*np.sum((Ra-model_state_variable[-1])**2))
+    #J = 1/(2*len(G))*(np.sum((G-true_G)**2)*0.1 + np.sum((Ra-model_state_variable[-1])**2))
 
     return J
+

@@ -47,24 +47,21 @@ def generate_path_unit(init_cond, param_list, control_gain, Filter, Z, noise, Gb
     else:
         print("invalid index")
         return
-
     for i in range(N_meas):
         ## Discretize to sub section in one dt
         sub_t_list  =  T_list[int(i): int((i+1)+1)]
         vn = h1 * (G - Gb) + h2 * X + h3 * (I - Ib) + h4 * Ra
 
         ## Solve the ODE in the sub section
-        state_variables =   Minimod_ODE_solver(init_cond, sub_t_list, param_list, vn, Gb, Ib, sim_idx, T, meal_params)
+        state_variables = Minimod_ODE_solver(init_cond, sub_t_list, param_list, vn, Gb, Ib, sim_idx, T, meal_params)
 
         '''the process noise would be added only when the function is used for making up a human subject'''
         for j in range(len(state_variables)):
-            # add process noise
+            # add process noise if constructing a person
             state_variables[j] += process_noise[j,i]
             # add the filter: Gn+1 = Gn+1^ + K(measurement - Gn+1^)
-            state_variables[j] = state_variables[j] + Filter[j]*(Z[i]-state_variables[j])
-
+            state_variables[j] = state_variables[j] + Filter[j]*(Z[i]-state_variables[0])
         G,X,I,Ra = state_variables
-
         ## Use the last value in G,X,I,Ra as initial condition for the next iteration
         init_cond = state_variables.copy()
 

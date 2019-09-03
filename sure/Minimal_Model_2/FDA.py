@@ -10,7 +10,7 @@ import numpy as np
 """a more efficient version"""
 
 
-def FDA_param(state_variable, true_G, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N,
+def FDA_param(state_variable, true_state, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N,
               meal_params):
     """take a list of parameters a, and return a list of dJ/da
     dJ/da = [J(a+s)-J(a-s)] / 2s
@@ -26,16 +26,15 @@ def FDA_param(state_variable, true_G, init_cond, param_list, control_gain, Filte
 
         state_variable_f, Z_f, true_state_f = generate_path_whole(init_cond, param_shift_f, control_gain, Filter, total_noise, Gb,
                                                       Ib, N_meas, T, T_list, N, meal_params)
-        true_G_f = true_state_f[0]
-        cost_f = cost_computation(true_G_f, state_variable_f, Gb, Ib, control_gain)  # J(a+s)
-        cost = cost_computation(true_G, state_variable, Gb, Ib, control_gain)  # J(a-s)
+        cost_f = cost_computation(true_state_f, state_variable_f, Gb, Ib, control_gain)  # J(a+s)
+        cost = cost_computation(true_state, state_variable, Gb, Ib, control_gain)  # J(a-s)
 
         dJ_da = (cost_f - cost) / (a - b)  # [J(a)-J(b)]/ 2(a-b)
         param_partial_derivative[i] = dJ_da
     return param_partial_derivative, cost
 
 
-def FDA_control(state_variable, true_G, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N,
+def FDA_control(state_variable, true_state, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N,
                 meal_params):
 
     control_partial_derivative = np.zeros(len(control_gain))
@@ -49,33 +48,30 @@ def FDA_control(state_variable, true_G, init_cond, param_list, control_gain, Fil
 
         state_variable_f, Z_f, true_state_f = generate_path_whole(init_cond, param_list, control_shift_f, Filter, total_noise, Gb,
                                                       Ib, N_meas, T, T_list, N, meal_params)
-        true_G_f = true_state_f[0]
-        cost_f = cost_computation(true_G_f, state_variable_f, Gb, Ib, control_shift_f)  # J(a+s)
-        cost = cost_computation(true_G, state_variable, Gb, Ib, control_gain)  # J(a-s)
+        cost_f = cost_computation(true_state_f, state_variable_f, Gb, Ib, control_shift_f)  # J(a+s)
+        cost = cost_computation(true_state, state_variable, Gb, Ib, control_gain)  # J(a-s)
 
         dJ_da = (cost_f - cost) / (a - b)  # [J(a)-J(b)]/ 2(a-b)
         control_partial_derivative[i] = dJ_da
     return control_partial_derivative, cost
 
 
-def FDA_filter(state_variable, true_G, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N,
+def FDA_filter(state_variable, true_state, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N,
                meal_params):
 
     filter_partial_derivative = np.zeros(len(Filter))
     for i in range(len(Filter)):
-        s = 0.005
+        s = 0.00005
         a = Filter[i] * (1 + s)  # shift a parameter s of its original value
         b = Filter[i]
 
         filter_shift_f = Filter.copy()  # make a copy of original parameter list
         filter_shift_f[i] = a  # assign the new list with a shifted parameter
-
         state_variable_f, Z_f, true_state_f  = generate_path_whole(init_cond, param_list, control_gain, filter_shift_f, total_noise,
                                                       Gb, Ib, N_meas, T, T_list, N, meal_params)
-        true_G_f = true_state_f[0]
-        cost_f = cost_computation(true_G_f, state_variable_f,Gb, Ib, control_gain)  # J(a+s)
-        cost = cost_computation(true_G, state_variable,  Gb, Ib, control_gain)  # J(a-s)
-
+        cost_f = cost_computation(true_state_f, state_variable_f, Gb, Ib, control_gain)  # J(a+s)
+        cost = cost_computation(true_state, state_variable,  Gb, Ib, control_gain)  # J(a-s)
         dJ_da = (cost_f - cost) / (a - b)  # [J(a)-J(b)]/ 2(a-b)
         filter_partial_derivative[i] = dJ_da
+
     return filter_partial_derivative, cost

@@ -4,12 +4,12 @@ from Initialization import init_cond, N, N_meas, param_list, Gb, Ib, T, T_list, 
 from Noise_generator import noise_path
 from Path_whole import generate_path_whole
 import matplotlib.pyplot as plt
+import numpy as np
 
-
-Filter = [0.01, 0.01, 0.01, 0.01]  # initial filter gain
-control_gain = [15, 3, 0.1, 0.5]   # initial control gain
+Filter = [0.1, 0.01, 0.01, 0.37]  # initial filter gain
+control_gain = np.array([15, 3, 0.1, 0.5])*0.001   # initial control gain
 algo = 'RMSprop'  # which optimization algorithm to use (Adam, RMSprop, or SGD)
-alpha = 1e-3      # learning rate
+alpha = 1e-2      # learning rate
 momentum = 0      # momentum for SGD
 beta1 = 0.9       # smoothing constant 1 (the only beta for RMSprop)
 beta2 = 0.99      # smoothing constant 2 (the additional beta for Adam)
@@ -39,8 +39,9 @@ model_state_variable2, Z2, true_state_variable2 = generate_path_whole(init_cond,
 
 ## Plot G
 # plt.plot(total_t_list, model_state_variable1[0], label="model estimation after training")
-plt.plot(total_t_list, true_state_variable2[0], label="in-silico subject with initial control")
+#plt.plot(total_t_list, true_state_variable2[0], label="in-silico subject with initial control")
 plt.plot(total_t_list, true_state_variable1[0], label="in-silico subject with trained control")
+plt.plot(total_t_list, model_state_variable1[0], label="model estimation")
 
 # plt.plot(total_t_list, len(total_t_list)*[140], label="upper bound")
 # plt.plot(total_t_list, len(total_t_list)*[80], label="lower bound")
@@ -52,7 +53,7 @@ plt.show()
 
 ## Plot Ra
 plt.plot(total_t_list, model_state_variable1[3], label="model estimation after training")
-plt.plot(total_t_list, true_state_variable2[3], label="in-silico subject with initial control")
+#plt.plot(total_t_list, true_state_variable2[3], label="in-silico subject with initial control")
 plt.plot(total_t_list, true_state_variable1[3], label="in-silico subject with trained control")
 
 plt.ylabel("Ra")

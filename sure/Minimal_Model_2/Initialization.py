@@ -16,7 +16,7 @@ qk_list = np.array([3000, 4500, 3500])*0 / meal_time  # unit: mg/min, from ref 1
 meal_params = (tk_list,qk_list,meal_time)
 
 # digestion coefficient
-tau =  80  # unit: 1  [unknown parameter!!!]
+tau =  100  # unit: 1  [unknown parameter!!!]
 # initial glucose rate of appearance
 Ra_0 = 5  # unit: mg/kg/min
 

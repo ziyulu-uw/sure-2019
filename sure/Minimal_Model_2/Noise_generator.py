@@ -17,12 +17,12 @@ def noise_path(init_cond, total_N_meas):
     """
     # np.random.seed(seed_num)
     G0, X0, I0, Ra0 = init_cond
-    process_noise_cov = 1/20 * np.array(init_cond)
+    process_noise_cov = 1/200 * np.array(init_cond)
 
     process_noise = np.zeros([4, total_N_meas])
     for i in range(len(init_cond)):
         process_noise[i,:] =  np.random.normal(0, process_noise_cov[i], [1,total_N_meas])
-    observation_noise_cov = 1/10 * G0
+    observation_noise_cov = 1/200 * G0
     observation_noise = np.random.normal(0,observation_noise_cov,[1, total_N_meas])
 
     return process_noise, observation_noise

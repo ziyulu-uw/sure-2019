@@ -20,7 +20,7 @@ def advance_person(true_init_cond, control_gain, N_meas, sim_idx, T, T_list, noi
     @:param noise:            noise of this control unit """
 
     ## Minimal Model Parameter to generate measurements
-    p1 = 0.6  # param determined by bio-experiments (unit: min^-1)
+    p1 = 0.36  # param determined by bio-experiments (unit: min^-1)
     p2 = 0.0122  # unit: min^-1
     p3 = 1.7e-5  # unit: min^-2 mU/l
     Gb = 125  # basal plasma glucose (unit:mg/dl)
@@ -34,7 +34,7 @@ def advance_person(true_init_cond, control_gain, N_meas, sim_idx, T, T_list, noi
     tau      = 100             #unit: 1
 
     ## True meal model
-    tk_list = np.array([60, 350, 720])   #unit: min
+    tk_list = np.array([200, 350, 720])   #unit: min
     # the time that the subject take the meal
     meal_time = 25
     # meal intake value
