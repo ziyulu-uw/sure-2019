@@ -4,7 +4,7 @@
 # Description: This program implements a wrapper function for the optimization algorithms
 
 from optimization_all import optimize_filter_control
-from optimization_sep import optimize_control
+# from optimization_sep import optimize_control
 import numpy as np
 
 

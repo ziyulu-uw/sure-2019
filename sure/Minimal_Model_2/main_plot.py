@@ -10,9 +10,10 @@ from plotter import multi_plot
 import matplotlib.pyplot as plt
 import numpy as np
 
-all_data = np.load('out50_lr2_w1000.npz')
+all_data = np.load('out800_lr2_w1000.npz')
 print(sorted(all_data.files))
 cost_l = all_data['cost_l']
+print(cost_l[-1])
 filter_l = all_data['filter_l']
 control_l = all_data['control_l']
 gradF_l = all_data['gradF_l']
@@ -24,7 +25,7 @@ momentum = 0      # momentum for SGD
 beta1 = 0.9       # smoothing constant 1 (the only beta for RMSprop)
 beta2 = 0.99      # smoothing constant 2 (the additional beta for Adam)
 M = 1             # mini-batch size
-n = 50          # number of gradient descent iterations
+n = 800          # number of gradient descent iterations
 
 ## Plot the change in the cost, filter, control, and gradients
 multi_plot(cost_l, p=2, which=algo, nIter=n, alpha=alpha, M=M, beta1=beta1, beta2=beta2, log=True, label=None)
@@ -57,11 +58,8 @@ model_state_variable2, Z2, true_state_variable2 = generate_path_whole(init_cond,
 plt.plot(total_t_list, model_state_variable1[0], label="model estimation after training")
 plt.plot(total_t_list, true_state_variable2[0], label="in-silico subject with initial control")
 plt.plot(total_t_list, true_state_variable1[0], label="in-silico subject with trained control")
-
-
-
-# plt.plot(total_t_list, len(total_t_list)*[140], label="upper bound")
-# plt.plot(total_t_list, len(total_t_list)*[80], label="lower bound")
+plt.plot(total_t_list, len(total_t_list)*[140], label="upper bound")
+plt.plot(total_t_list, len(total_t_list)*[80], label="lower bound")
 plt.ylabel("G")
 plt.xlabel("t")
 plt.title("Glucose $G(t)$")
