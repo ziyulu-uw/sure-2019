@@ -6,7 +6,7 @@ from Path_whole import generate_path_whole
 import matplotlib.pyplot as plt
 import numpy as np
 
-Filter = [0.1, 0.01, 0.01, 0.37]  # initial filter gain
+Filter = [1, 0.01, 0.01, 0.37]  # initial filter gain
 control_gain = np.array([15, 3, 0.1, 0.5])*0.001   # initial control gain
 algo = 'RMSprop'  # which optimization algorithm to use (Adam, RMSprop, or SGD)
 alpha = 1e-2      # learning rate

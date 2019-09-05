@@ -30,9 +30,6 @@ def cost_computation(true_state, model_state_variable, Gb, Ib, control_gain, ub=
     h1, h2, h3, h4 = control_gain
     vn_list = h1*(G-Gb) + h2*X + h3*(I-Ib) + h4*Ra
     J_ = 1000*np.sum(G_hat**2) + lbda*np.sum(vn_list**2) + np.sum((G-true_G)**2) + np.sum((Ra-true_state[3])**2)
-    for i in range(len(G)):
-        if true_state[2][i] < 0:
-            J_ += 100000*(0 - true_state[2][i])
     J = 1/(2*len(G))*J_
     # J = 1/(2*len(G))*(np.sum((G-true_G)**2)*0.1 + np.sum((Ra-model_state_variable[-1])**2))
 

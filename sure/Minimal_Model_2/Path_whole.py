@@ -47,11 +47,9 @@ def generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise
 
         ## Get the measurements in this control period
         true_init_cond, Z, true_state = advance_person(true_init_cond, control_gain, N_meas, i, T, T_list, noise)  # advance_person call generate_path_unit
-
         # run each control unit in a row, use the last state value of this period as the initial condition for next period
         G, X, I, Ra = generate_path_unit(init_cond, param_list, control_gain, Filter, Z, noise, Gb, Ib, i, N_meas, T, T_list, meal_params, idx=0)
         init_cond = [G[-1],X[-1],I[-1],Ra[-1]]
-
         ## Record
         G_list.extend(list(G[1:]))
         X_list.extend(list(X[1:]))
