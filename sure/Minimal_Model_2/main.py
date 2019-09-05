@@ -10,18 +10,18 @@ from wrapper import optim_wrapper
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('-k1', type=float, default=0.1, help='1st parameter in the filter')
-parser.add_argument('-k2', type=float, default=0.01, help='2nd parameter in the filter')
-parser.add_argument('-k3', type=float, default=0.01, help='3rd parameter in the filter')
-parser.add_argument('-k4', type=float, default=0.37, help='4th parameter in the filter')
-parser.add_argument('-h1', type=float, default=0.015,  help='1st parameter in the control')
-parser.add_argument('-h2', type=float, default=0.003,  help='2nd parameter in the control')
-parser.add_argument('-h3', type=float, default=0.0001,  help='3rd parameter in the control')
-parser.add_argument('-h4', type=float, default=0.0005, help='4th parameter in the control')
+parser.add_argument('-k1', type=float, default=0.76, help='1st parameter in the filter')
+parser.add_argument('-k2', type=float, default=0.000001, help='2nd parameter in the filter')
+parser.add_argument('-k3', type=float, default=0.000001, help='3rd parameter in the filter')
+parser.add_argument('-k4', type=float, default=0.56, help='4th parameter in the filter')
+parser.add_argument('-h1', type=float, default=1.3,  help='1st parameter in the control')
+parser.add_argument('-h2', type=float, default=2,  help='2nd parameter in the control')
+parser.add_argument('-h3', type=float, default=0.9,  help='3rd parameter in the control')
+parser.add_argument('-h4', type=float, default=0.03, help='4th parameter in the control')
 
 
 parser.add_argument('-w',                     type=str,   default='RMSprop', help='which optimization algorithm to use')
-parser.add_argument('-lr', '--learning_rate', type=float, default=1e-3,      help='learning rate')
+parser.add_argument('-lr', '--learning_rate', type=float, default=1e-2,      help='learning rate')
 parser.add_argument('-mon', '--momentum',     type=float, default=0,         help='momentum')
 parser.add_argument('-b1', '--beta1',         type=float, default=0.9,       help='smoothing constant 1')
 parser.add_argument('-b2', '--beta2',         type=float, default=0.999,     help='smoothing constant 2 (for Adam)')
