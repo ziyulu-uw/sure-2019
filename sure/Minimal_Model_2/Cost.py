@@ -6,13 +6,14 @@
 import numpy as np
 
 
-def cost_computation(true_state, model_state_variable, Gb, Ib, control_gain, ub=140, lb=80, lbda=0.0):
+def cost_computation(true_state, model_state_variable, Gb, Ib, control_gain, lbda, ub=140, lb=80):
     """
     a function to calculate the total cost from time 0 to t1
     :param true_G:      a true G list of the human, not the ODE model
     :param G, X, I, Ra: list of state variables of the whole run
     :param Gb, Ib:      basal values
     :param control_gain = [h1,h2,h3,h4]
+    :param lbda: weight of the control in the cost
     :param ub, lb: upper and lower bound of the euglycemic zone
     :return: cost of the whole run
     """

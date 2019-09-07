@@ -9,7 +9,7 @@ import numpy as np
 
 
 def optim_wrapper(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
-            meal_params, which, alpha, momentum, beta1, beta2, M, n, fname):
+            meal_params, lbda, which, alpha, momentum, beta1, beta2, M, n, fname):
     # a wrapper function that calls the function optimize_filter_control in optimization_all.py
     # and saves the data to file fname
 
@@ -27,7 +27,7 @@ def optim_wrapper(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T
     np.random.seed(1)
 
     Filter, control_gain, cost_l, filter_l, control_l, gradF_l, gradC_l = optimize_filter_control(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
-                            meal_params, which, alpha, momentum, beta1, beta2, M, n)
+                            meal_params, lbda, which, alpha, momentum, beta1, beta2, M, n)
     # control_l, cost_l, grad_l = optimize_control(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
     #                  meal_params, which, alpha, momentum, beta1, beta2, n)  # for testing control
     print("Initial loss: {:10.2e}".format(cost_l[0]))

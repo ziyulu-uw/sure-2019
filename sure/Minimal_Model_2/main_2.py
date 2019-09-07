@@ -15,9 +15,10 @@ beta1 = 0.9       # smoothing constant 1 (the only beta for RMSprop)
 beta2 = 0.99      # smoothing constant 2 (the additional beta for Adam)
 M = 1             # mini-batch size
 n = 10            # number of gradient descent iterations
+lbda = 0          # scaling factor of control in the cost
 
 Filter, control_gain, cost_l, filter_l, control_l, gradF_l, gradC_l = optim_wrapper(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
-            meal_params, which=algo, alpha=alpha, momentum=momentum, beta1=beta1, beta2=beta2, M=M, n=n, fname='out')
+            meal_params, lbda, which=algo, alpha=alpha, momentum=momentum, beta1=beta1, beta2=beta2, M=M, n=n, fname='out')
 
 ## Plot the change in the cost, filter, control, and gradients
 multi_plot(cost_l, p=2, which=algo, nIter=n, alpha=alpha, M=M, beta1=beta1, beta2=beta2, log=True, label=None)

@@ -12,7 +12,9 @@ from FDA import FDA_control, FDA_filter, FDA_param
 
 
 def optimize_filter_control(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
-                            meal_params, which, alpha, momentum, beta1, beta2, M, n):
+                            meal_params, lbda, which, alpha, momentum, beta1, beta2, M, n):
+
+    # lbda -- scaling factor of control in cost computation
     # which -- which optimization algorithm to use (SGD, Adam, or RMSprop), \
     # alpha -- learning rate, \
     # momentum -- momentum factor (can set to 0), \
@@ -51,9 +53,9 @@ def optimize_filter_control(init_cond, param_list, control_gain, Filter, Gb, Ib,
                                              T, T_list, N, meal_params)
         #true_G = true_state_variable[0]
         gradF, cost = FDA_filter(state_variable, true_state_variable,  init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
-                                 N_meas, T, T_list, N, meal_params)
+                                 N_meas, T, T_list, N, meal_params, lbda)
         gradC, cost = FDA_control(state_variable, true_state_variable, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
-                                 N_meas, T, T_list, N, meal_params)
+                                 N_meas, T, T_list, N, meal_params, lbda)
         grad = np.concatenate((np.array(gradF), np.array(gradC)), axis=0)
         cost_l.append(cost)
         filter_l[:,i] = Filter
@@ -70,7 +72,7 @@ def optimize_filter_control(init_cond, param_list, control_gain, Filter, Gb, Ib,
     total_noise = noise_path(init_cond, N * N_meas)
     state_variable, Z, true_state_variable = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
                                          T_list, N, meal_params)
-    cost = cost_computation(true_state_variable, state_variable, Gb, Ib, control_gain)
+    cost = cost_computation(true_state_variable, state_variable, Gb, Ib, control_gain, lbda, ub=140, lb=80)
     cost_l.append(cost)
     filter_l[:, n] = Filter
     control_l[:, n] = control_gain

@@ -11,8 +11,9 @@ from Path_whole import generate_path_whole
 from FDA import FDA_control, FDA_filter, FDA_param
 
 
-def optimize_param(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params,
+def optimize_param(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params,lbda,
                    which, alpha, momentum, beta, n):
+    # lbda -- scaling factor of control in cost computation
     # which -- which optimization algorithm to use (SGD, Adam, or RMSprop), alpha -- learning rate, \
     # momentum -- momentum factor (can set to 0), n -- total number gradient steps,
     # optimizes parameters using SGD algorithms
@@ -41,7 +42,7 @@ def optimize_param(init_cond, param_list, control_gain, Filter, total_noise, Gb,
                                              T, T_list, N, meal_params)
         #true_G = true_state_variable[0]
         grad, cost = FDA_param(state_variable, true_state_variable, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
-                               T, T_list, N, meal_params)
+                               T, T_list, N, meal_params, lbda)
         cost_l.append(cost)
         grad_l.append(grad)
         # print(grad)
@@ -53,14 +54,15 @@ def optimize_param(init_cond, param_list, control_gain, Filter, total_noise, Gb,
     param_list = param_tensor.detach().numpy()
     state_variable, Z, true_state_variable = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
                                          T_list, N, meal_params)
-    cost = cost_computation(true_state_variable, state_variable, Gb, Ib, control_gain)
+    cost = cost_computation(true_state_variable, state_variable, Gb, Ib, control_gain, lbda, ub=140, lb=80)
     cost_l.append(cost)
 
     return param_list, cost_l, grad_l
 
 
 def optimize_control(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
-                     meal_params, which, alpha, momentum, beta1, beta2, n):
+                     meal_params, lbda, which, alpha, momentum, beta1, beta2, n):
+    # lbda -- scaling factor of control in cost computation
     # which -- which optimization algorithm to use (SGD, Adam, or RMSprop), alpha -- learning rate, \
     # momentum -- momentum factor (can set to 0), n -- total number gradient steps,
     # optimizes parameters using SGD algorithms
@@ -91,7 +93,7 @@ def optimize_control(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas
                                              T, T_list, N, meal_params)
         #true_G = true_state_variable[0]
         grad, cost = FDA_control(state_variable, true_state_variable, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
-                                 N_meas, T, T_list, N, meal_params)
+                                 N_meas, T, T_list, N, meal_params, lbda)
         cost_l.append(cost)
         control_l[:, i] = control_gain
         grad_l[:, i] = np.array(grad)
@@ -103,15 +105,16 @@ def optimize_control(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas
     total_noise = noise_path(init_cond, N * N_meas)
     state_variable, Z, true_state_variable = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
                                          T_list, N, meal_params)
-    cost = cost_computation(true_state_variable, state_variable, Gb, Ib, control_gain)
+    cost = cost_computation(true_state_variable, state_variable, Gb, Ib, control_gain, lbda, ub=140, lb=80)
     cost_l.append(cost)
     control_l[:, n] = control_gain
 
     return control_l, cost_l, grad_l
 
 
-def optimize_filter(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params,
+def optimize_filter(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params,lbda,
                     which, alpha, momentum, beta, n):
+    # lbda -- scaling factor of control in cost computation
     # which -- which optimization algorithm to use (SGD, Adam, or RMSprop), alpha -- learning rate, \
     # momentum -- momentum factor (can set to 0), n -- total number gradient steps,
     # optimizes parameters using SGD algorithms
@@ -140,7 +143,7 @@ def optimize_filter(init_cond, param_list, control_gain, Filter, total_noise, Gb
                                              T, T_list, N, meal_params)
         #true_G = true_state_variable[0]
         grad, cost = FDA_filter(state_variable, true_state_variable, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
-                                N_meas, T, T_list, N, meal_params)
+                                N_meas, T, T_list, N, meal_params, lbda)
         cost_l.append(cost)
         grad_l.append(grad)
         # print(grad)
@@ -152,7 +155,7 @@ def optimize_filter(init_cond, param_list, control_gain, Filter, total_noise, Gb
     Filter = Filter_tensor.detach().numpy()
     state_variable, Z, true_state_variable = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
                                          T_list, N, meal_params)
-    cost = cost_computation(true_state_variable, state_variable, Gb, Ib, control_gain)
+    cost = cost_computation(true_state_variable, state_variable, Gb, Ib, control_gain,lbda, ub=140, lb=80)
     cost_l.append(cost)
 
     return Filter, cost_l, grad_l

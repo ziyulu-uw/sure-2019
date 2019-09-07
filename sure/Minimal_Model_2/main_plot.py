@@ -10,7 +10,7 @@ from plotter import multi_plot
 import matplotlib.pyplot as plt
 import numpy as np
 
-all_data = np.load('out1600.npz')
+all_data = np.load('out2000_1.npz')
 print(sorted(all_data.files))
 cost_l = all_data['cost_l']
 print(cost_l[-1])
@@ -25,7 +25,7 @@ momentum = 0      # momentum for SGD
 beta1 = 0.9       # smoothing constant 1 (the only beta for RMSprop)
 beta2 = 0.99      # smoothing constant 2 (the additional beta for Adam)
 M = 1             # mini-batch size
-n = 1600        # number of gradient descent iterations
+n = 2000           # number of gradient descent iterations
 
 ## Plot the change in the cost, filter, control, and gradients
 multi_plot(cost_l, p=2, which=algo, nIter=n, alpha=alpha, M=M, beta1=beta1, beta2=beta2, log=True, label=None)
@@ -67,37 +67,37 @@ plt.legend()
 plt.show()
 
 ## Plot X
-# plt.plot(total_t_list, model_state_variable1[1], label="model estimation after training")
-# plt.plot(total_t_list, true_state_variable1[1], label="in-silico subject after training")
-# plt.plot(total_t_list, true_state_variable2[1], label="in-silico subject before training")
-#
-#
-# plt.ylabel("X")
-# plt.xlabel("t")
-# plt.title("Remote insulin $X(t)$")
-# plt.legend()
-# plt.show()
-#
-# ## Plot I
-# plt.plot(total_t_list, model_state_variable1[2], label="model estimation after training")
-# plt.plot(total_t_list, true_state_variable1[2], label="in-silico subject after training")
-# plt.plot(total_t_list, true_state_variable2[2], label="in-silico subject before training")
-#
-#
-# plt.ylabel("I")
-# plt.xlabel("t")
-# plt.title("Insulin $I(t)$")
-# plt.legend()
-# plt.show()
-#
-# ## Plot Ra
-# plt.plot(total_t_list, model_state_variable1[3], label="model estimation after training")
-# plt.plot(total_t_list, true_state_variable1[3], label="in-silico subject after training")
-# plt.plot(total_t_list, true_state_variable2[3], label="in-silico subject before training")
-#
-#
-# plt.ylabel("Ra")
-# plt.xlabel("t")
-# plt.title("Glucose $Ra(t)$")
-# plt.legend()
-# plt.show()
+plt.plot(total_t_list, model_state_variable1[1], label="model estimation after training")
+plt.plot(total_t_list, true_state_variable1[1], label="in-silico subject after training")
+plt.plot(total_t_list, true_state_variable2[1], label="in-silico subject before training")
+
+
+plt.ylabel("X")
+plt.xlabel("t")
+plt.title("Remote insulin $X(t)$")
+plt.legend()
+plt.show()
+
+## Plot I
+plt.plot(total_t_list, model_state_variable1[2], label="model estimation after training")
+plt.plot(total_t_list, true_state_variable1[2], label="in-silico subject after training")
+plt.plot(total_t_list, true_state_variable2[2], label="in-silico subject before training")
+
+
+plt.ylabel("I")
+plt.xlabel("t")
+plt.title("Insulin $I(t)$")
+plt.legend()
+plt.show()
+
+## Plot Ra
+plt.plot(total_t_list, model_state_variable1[3], label="model estimation after training")
+plt.plot(total_t_list, true_state_variable1[3], label="in-silico subject after training")
+plt.plot(total_t_list, true_state_variable2[3], label="in-silico subject before training")
+
+
+plt.ylabel("Ra")
+plt.xlabel("t")
+plt.title("Glucose $Ra(t)$")
+plt.legend()
+plt.show()
