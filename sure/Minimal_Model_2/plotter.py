@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def multi_plot(data, p, which, nIter, alpha, M, beta1, beta2, log, label=None):
+def multi_plot(data, p, which, nIter, alpha, beta1, beta2, log, label=None):
 
     if p == 1:  # when plotting filter_l, control_l, gradF_l, or gradC_l
         n = len(data[0])
@@ -19,13 +19,13 @@ def multi_plot(data, p, which, nIter, alpha, M, beta1, beta2, log, label=None):
             plt.yscale("log")
         plt.rcParams["axes.titlesize"] = 8
         if which == 'RMSprop':
-            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {}".
-                      format(which, nIter, alpha, M, beta1))
+            plt.title("{} algorithm with {} steps, step size {}, smoothing constant {}".
+                      format(which, nIter, alpha, beta1))
         elif which == 'Adam':
-            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {},{}".
-                      format(which, nIter, alpha, M, beta1, beta2))
+            plt.title("{} algorithm with {} steps, step size {}, smoothing constant {},{}".
+                      format(which, nIter, alpha, beta1, beta2))
         else:
-            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}".format(which, nIter, alpha, M))
+            plt.title("{} algorithm with {} steps, step size {}, ".format(which, nIter, alpha))
 
         plt.xlabel("number of optimization steps")
         if label == 'K':
@@ -50,13 +50,13 @@ def multi_plot(data, p, which, nIter, alpha, M, beta1, beta2, log, label=None):
             plt.yscale("log")
         plt.rcParams["axes.titlesize"] = 8
         if which == 'RMSprop':
-            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {}".
-                      format(which, nIter, alpha, M, beta1))
+            plt.title("{} algorithm with {} steps, step size {}, smoothing constant {}".
+                      format(which, nIter, alpha, beta1))
         elif which == 'Adam':
-            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {},{}".
-                      format(which, nIter, alpha, M, beta1, beta2))
+            plt.title("{} algorithm with {} steps, step size {}, smoothing constant {},{}".
+                      format(which, nIter, alpha, beta1, beta2))
         else:
-            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}".format(which, nIter, alpha, M))
+            plt.title("{} algorithm with {} steps, step size {}, ".format(which, nIter, alpha))
 
         plt.xlabel("number of optimization steps")
         plt.ylabel("cost")
@@ -75,13 +75,13 @@ def multi_plot(data, p, which, nIter, alpha, M, beta1, beta2, log, label=None):
             plt.yscale("log")
         plt.rcParams["axes.titlesize"] = 8
         if which == 'RMSprop':
-            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {}".
-                      format(which, nIter, alpha, M, beta1))
+            plt.title("{} algorithm with {} steps, step size {}, smoothing constant {}".
+                      format(which, nIter, alpha, beta1))
         elif which == 'Adam':
-            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}, smoothing constant {},{}".
-                      format(which, nIter, alpha, M, beta1, beta2))
+            plt.title("{} algorithm with {} steps, step size {}, smoothing constant {},{}".
+                      format(which, nIter, alpha, beta1, beta2))
         else:
-            plt.title("{} algorithm with {} steps, step size {}, minibatch size {}".format(which, nIter, alpha, M))
+            plt.title("{} algorithm with {} steps, step size {}, ".format(which, nIter, alpha))
 
         plt.xlabel("number of optimization steps")
         plt.ylabel("cost")

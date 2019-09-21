@@ -4,6 +4,7 @@
 # Description: This program imports optimization methods from PyTorch for the filter and control optimization problem
 
 import torch
+from torch.nn.utils import clip_grad_norm
 import numpy as np
 from Cost import cost_computation
 from Noise_generator import noise_path
@@ -12,15 +13,16 @@ from FDA import FDA_control, FDA_filter, FDA_param
 
 
 def optimize_filter_control(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
-                            meal_params, lbda, which, alpha, momentum, beta1, beta2, M, n):
+                            meal_params, var1, var2, lbda, r, which, alpha, momentum, beta1, beta2, n, clip):
 
     # lbda -- scaling factor of control in cost computation
+    # r -- weight of control cost
     # which -- which optimization algorithm to use (SGD, Adam, or RMSprop), \
     # alpha -- learning rate, \
     # momentum -- momentum factor (can set to 0), \
     # betas -- coefficients for computing running average (set to None to use the default values), \
-    # M -- mini-batch size, \
     # n -- total number gradient steps, \
+    # clip -- if clip > 0, clip gradient s.t. max norm=clip
     # optimizes filter and control using SGD algorithms
     # returns optimized parameters, a list of cost at each gradient step, a list of gradient at each gradient step
 
@@ -48,14 +50,14 @@ def optimize_filter_control(init_cond, param_list, control_gain, Filter, Gb, Ib,
         FC = FC_tensor.detach().numpy()
         Filter = FC[:len(Filter)]
         control_gain = FC[len(Filter):]
-        total_noise = noise_path(init_cond, N * N_meas)
+        total_noise = noise_path(init_cond, N * N_meas, var1, var2)
         state_variable, Z, true_state_variable = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
                                              T, T_list, N, meal_params)
         #true_G = true_state_variable[0]
         gradF, cost = FDA_filter(state_variable, true_state_variable,  init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
-                                 N_meas, T, T_list, N, meal_params, lbda)
+                                 N_meas, T, T_list, N, meal_params, lbda, r)
         gradC, cost = FDA_control(state_variable, true_state_variable, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
-                                 N_meas, T, T_list, N, meal_params, lbda)
+                                 N_meas, T, T_list, N, meal_params, lbda, r)
         grad = np.concatenate((np.array(gradF), np.array(gradC)), axis=0)
         cost_l.append(cost)
         filter_l[:,i] = Filter
@@ -64,15 +66,17 @@ def optimize_filter_control(init_cond, param_list, control_gain, Filter, Gb, Ib,
         gradC_l[:,i] = np.array(gradC)
         grad_tensor = torch.tensor(grad, requires_grad=False)
         FC_tensor.grad = grad_tensor
+        if clip > 0:
+            clip_grad_norm([FC_tensor], clip)
         optimizer.step()
 
     FC = FC_tensor.detach().numpy()
     Filter = FC[:len(Filter)]
     control_gain = FC[len(Filter):]
-    total_noise = noise_path(init_cond, N * N_meas)
+    total_noise = noise_path(init_cond, N * N_meas, var1, var2)
     state_variable, Z, true_state_variable = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas, T,
                                          T_list, N, meal_params)
-    cost = cost_computation(true_state_variable, state_variable, Gb, Ib, control_gain, lbda, ub=140, lb=80)
+    cost = cost_computation(true_state_variable, state_variable, Gb, Ib, control_gain, lbda, r, ub=140, lb=80)
     cost_l.append(cost)
     filter_l[:, n] = Filter
     control_l[:, n] = control_gain
