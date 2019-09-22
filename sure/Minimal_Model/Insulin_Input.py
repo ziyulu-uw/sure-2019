@@ -17,10 +17,12 @@ class phar_kin:
 
     S1_0 = 9294.9
     S2_0 = 9294.9    # (unit: miuU/kg)
-    vb   = 182.3085  # (unit: miuU/kg/min)
+    tI   = 50.9847   # (unit: min)
+    #tI = 5
+    vb   = S1_0/tI
+    #vb   = 182.3085  # (unit: miuU/kg/min)
     VI   = 87        # (unit: dl/kg)
     #VI   = 87*100     # unit conversion: ml/kg
-    tI   = 50.9847   # (unit: min)
     kI   = 0.1905    # (unit: min^-1)
     vB   = 40000     # (unit: miuU/kg/min)
     Ib   = S1_0/(tI * VI * kI)  # basal plasma insulin concentration (unit: mU/l)

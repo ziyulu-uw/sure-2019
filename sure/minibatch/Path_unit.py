@@ -30,7 +30,7 @@ def generate_path_unit(init_cond, param_list, control_gain, Filter, Z, noise, Gb
     @:param T_list:                          time discretization in one control simulation
     @:param T:                               Time for one control period
     @:param meal_params                      meal time and intake amount
-    @:param idx:                             idx=0: model simulation; idx=1: in-silico
+    @:param idx:                             idx=0: model simulation; idx=1: in-silico person
     :return G,X,I,Ra                         arrays of state variables in one control period """
 
     G, X, I, Ra = init_cond
@@ -64,7 +64,6 @@ def generate_path_unit(init_cond, param_list, control_gain, Filter, Z, noise, Gb
             state_variables[j] = state_variables[j] + Filter[j]*(Z[i]-state_variables[0])
             if state_variables[j]<0:
                 state_variables[j]=0
-
         G,X,I,Ra = state_variables
         ## Use the last value in G,X,I,Ra as initial condition for the next iteration
         init_cond = state_variables.copy()

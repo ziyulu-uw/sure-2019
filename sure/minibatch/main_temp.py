@@ -13,7 +13,7 @@ from wrapper import optim_wrapper
 import numpy as np
 #Filter = np.array([0.76, -0.00000000, 0.000000, 0.56]) # initial filter gain
 #Filter = np.array([0.7, -1.7, 0, 2.8])
-Filter = np.array([ 0.73336523, -0.12375505, 17.76651593 , 2.80219249])
+Filter = np.array([ 0.73336523, -0.12375505, 17.76651593 , 2.80219249])*0
 #control_gain = np.array([1.3, 2, 0.9, 0.03])  # initial control gain
 control_gain = np.array([68.32140527, -1.78250341, -0.47587041, 21.57038705])
 ## Compare the results before and after training
