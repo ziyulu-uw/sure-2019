@@ -22,7 +22,7 @@ parser.add_argument('-h4', type=float, default=0.03, help='4th parameter in the 
 parser.add_argument('-v1', '--var1',          type=float, default=0.005,     help='scaling constant for determining process noise covariance')
 parser.add_argument('-v2', '--var2',          type=float, default=0.005,     help='scaling constant for determining observation noise covariance')
 parser.add_argument('-lam', '--lamda',        type=float, default=0,         help='scaling factor of control in the cost')
-parser.add_argument('-r',                     type=float, default=0,         help='weight of control cost (unused)')
+parser.add_argument('-r',                     type=float, default=0,         help='weight of estimation cost')
 parser.add_argument('-w',                     type=str,   default='RMSprop', help='which optimization algorithm to use')
 parser.add_argument('-lr', '--learning_rate', type=float, default=1e-2,      help='learning rate')
 parser.add_argument('-mon', '--momentum',     type=float, default=0,         help='momentum')
@@ -31,6 +31,7 @@ parser.add_argument('-b2', '--beta2',         type=float, default=0.999,     hel
 # parser.add_argument('-M', '--minibatch',      type=int,   default=1,         help='minibatch size')
 parser.add_argument('-n', '--nIter',          type=int,   default=100,       help='number of training iterations')
 parser.add_argument('-c', '--clip',           type=float, default=0,         help='maximum norm for gradient clipping')
+parser.add_argument('-a', '--accuracy',       type=int,   default=1,         help='order of accuracy of gradient computation (1 or 2)')
 parser.add_argument('-f', '--file_name',      type=str,   default='out',     help='name of the output file')
 
 
@@ -43,4 +44,5 @@ control_gain = [args.h1, args.h2, args.h3, args.h4]
 Filter, control_gain, cost_l, filter_l, control_l, gradF_l, gradC_l = optim_wrapper(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
                                                                                     meal_params, var1=args.var1, var2=args.var2, lbda=args.lamda, r=args.r,
                                                                                     which=args.w, alpha=args.learning_rate, momentum=args.momentum,
-                                                                                    beta1=args.beta1, beta2=args.beta2, n=args.nIter, clip=args.clip, fname=args.file_name)
+                                                                                    beta1=args.beta1, beta2=args.beta2, n=args.nIter, clip=args.clip,
+                                                                                    acc=args.accuracy, fname=args.file_name)

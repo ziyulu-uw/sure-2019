@@ -9,11 +9,12 @@ import numpy as np
 from Cost import cost_computation
 from Noise_generator import noise_path
 from Path_whole import generate_path_whole
-from FDA import FDA_control, FDA_filter, FDA_param
+from FDA import FDA_control, FDA_filter
+from FinteDiffApprox import FDA_filter_2, FDA_control_2
 
 
 def optimize_filter_control(init_cond, param_list, control_gain, Filter, Gb, Ib, N_meas, T, T_list, N,
-                            meal_params, var1, var2, lbda, r, which, alpha, momentum, beta1, beta2, n, clip):
+                            meal_params, var1, var2, lbda, r, which, alpha, momentum, beta1, beta2, n, clip, acc):
 
     # lbda -- scaling factor of control in cost computation
     # r -- weight of control cost
@@ -23,6 +24,7 @@ def optimize_filter_control(init_cond, param_list, control_gain, Filter, Gb, Ib,
     # betas -- coefficients for computing running average (set to None to use the default values), \
     # n -- total number gradient steps, \
     # clip -- if clip > 0, clip gradient s.t. max norm=clip
+    # acc -- order of accuracy of gradient computation (1 or 2)
     # optimizes filter and control using SGD algorithms
     # returns optimized parameters, a list of cost at each gradient step, a list of gradient at each gradient step
 
@@ -54,10 +56,18 @@ def optimize_filter_control(init_cond, param_list, control_gain, Filter, Gb, Ib,
         state_variable, Z, true_state_variable = generate_path_whole(init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib, N_meas,
                                              T, T_list, N, meal_params)
         #true_G = true_state_variable[0]
-        gradF, cost = FDA_filter(state_variable, true_state_variable,  init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
+        if acc == 1:
+            gradF, cost = FDA_filter(state_variable, true_state_variable,  init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
                                  N_meas, T, T_list, N, meal_params, lbda, r)
-        gradC, cost = FDA_control(state_variable, true_state_variable, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
+            gradC, cost = FDA_control(state_variable, true_state_variable, init_cond, param_list, control_gain, Filter, total_noise, Gb, Ib,
                                  N_meas, T, T_list, N, meal_params, lbda, r)
+        else:
+            gradF = FDA_filter_2(init_cond, param_list, control_gain, Filter,
+                                       total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params, lbda, r)
+            gradC = FDA_control_2(init_cond, param_list, control_gain, Filter,
+                                      total_noise, Gb, Ib, N_meas, T, T_list, N, meal_params, lbda, r)
+            cost = cost_computation(true_state_variable, state_variable, Gb, Ib, control_gain, lbda, r, ub=140, lb=80)
+
         grad = np.concatenate((np.array(gradF), np.array(gradC)), axis=0)
         cost_l.append(cost)
         filter_l[:,i] = Filter

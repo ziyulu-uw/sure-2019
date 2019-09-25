@@ -14,7 +14,7 @@ def cost_computation(true_state, model_state_variable, Gb, Ib, control_gain, lbd
     :param Gb, Ib:      basal values
     :param control_gain = [h1,h2,h3,h4]
     :param lbda: weight of the control in the cost
-    :param r: weight of control cost
+    :param r: weight of estimation cost
     :param ub, lb: upper and lower bound of the euglycemic zone
     :return: cost of the whole run
     """
@@ -42,8 +42,12 @@ def cost_computation(true_state, model_state_variable, Gb, Ib, control_gain, lbd
     #      lbda*np.sum(((vn - np.mean(vn)) / np.std(vn))**2)  # control cost
     # J = J1+r*J2
 
-    J_ = 1000 * np.sum(G_hat ** 2) + lbda * np.sum(vn_list ** 2) + np.sum((G - true_G) ** 2) + np.sum((Ra - true_state[3]) ** 2)\
-         + np.sum((10 * (X - true_state[1])) ** 2) + np.sum((I - true_state[2]) ** 2)
+    # J_ = 1000*np.sum(G_hat ** 2) + lbda * np.sum(vn_list ** 2) + np.sum((G - true_G) ** 2) + np.sum((Ra - true_state[3]) ** 2)\
+    #         + np.sum((10 * (X - true_state[1])) ** 2) + np.sum((I - true_state[2]) ** 2)
+
+    J_est = np.sum((G - true_G) ** 2) + np.sum((Ra - true_state[3]) ** 2)\
+            + np.sum((10 * (X - true_state[1])) ** 2) + np.sum((I - true_state[2]) ** 2)
+    J_ = np.sum(G_hat ** 2) + lbda * np.sum(vn_list ** 2) + r * J_est
     J = 1/(2*len(G))*J_
 
     return J
